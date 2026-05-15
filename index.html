@@ -365,7 +365,7 @@ function App() {
   const [videos, setVideos] = useState(Array(4).fill(""));
 
   return (
-    <div className="page">
+    <div style={{position:"fixed",top:0,left:0,width:"100vw",height:"100vh",overflowY:"auto",background:"#0a0a0a"}}><div style={{maxWidth:1190,margin:"0 auto",padding:0}}>
 
       {/* 히어로 */}
       <div className="wrap" style={{ padding: "80px 40px 72px" }}>
@@ -497,7 +497,7 @@ function App() {
         </p>
       </footer>
 
-    </div>
+    </div></div>
   );
 }
 
