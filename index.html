@@ -11,328 +11,274 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    html,body{background:#0a0a0a;color:#f0ece4;font-family:'Noto Sans KR',sans-serif;overflow-x:hidden;}
-    #root{width:100%;}
+    html,body{background:#0a0a0a;color:#f0ece4;font-family:'Noto Sans KR',sans-serif;overflow-x:hidden;min-height:100%;}
+    #root{width:100%;min-height:100vh;background:#0a0a0a;}
 
-    .nav{position:sticky;top:0;z-index:200;width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:68px;background:rgba(10,10,10,.96);backdrop-filter:blur(18px);border-bottom:1px solid rgba(240,236,228,.08);}
+    /* 카드 가로 = 6.6cm ≈ 250px, 4장 + gap(10px)*3 = 1030px, 패딩 40px*2 = 1110px */
+    .wrap{max-width:1110px;margin:0 auto;padding:0 40px;}
 
-    .photo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:0 40px;}
-    .video-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:0 40px;}
+    .nav{position:sticky;top:0;z-index:200;background:rgba(10,10,10,.96);backdrop-filter:blur(18px);border-bottom:1px solid rgba(240,236,228,.08);}
+    .nav-inner{max-width:1110px;margin:0 auto;padding:0 40px;height:72px;display:flex;align-items:center;}
 
-    .photo-card{position:relative;padding-top:177.78%;background:#111;border-radius:16px;overflow:hidden;border:1px solid rgba(240,236,228,.1);cursor:pointer;transition:border-color .3s;}
+    .photo-card{position:relative;padding-top:177.78%;background:#111;border-radius:14px;overflow:hidden;border:1px solid rgba(240,236,228,.1);cursor:pointer;transition:border-color .3s;}
     .photo-card:hover{border-color:rgba(204,255,0,.4);}
     .photo-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
-    .photo-card-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+    .photo-card-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;}
 
-    .video-card{position:relative;padding-top:177.78%;background:#111;border-radius:16px;overflow:hidden;border:1px solid rgba(240,236,228,.1);}
+    .video-card{position:relative;padding-top:177.78%;background:#111;border-radius:14px;overflow:hidden;border:1px solid rgba(240,236,228,.1);}
     .video-card video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
-    .video-card-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+    .video-card-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;}
 
-    .lime-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:#CCFF00;color:#0a0a0a;border:none;border-radius:50px;padding:16px 32px;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit;text-decoration:none;transition:opacity .2s;}
+    .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+
+    /* 버튼 — 반반 */
+    .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
+    .kakao-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:#FEE500;color:#0a0a0a;border:none;border-radius:50px;padding:14px 20px;font-size:14px;font-weight:900;cursor:pointer;font-family:inherit;text-decoration:none;transition:opacity .2s;}
+    .kakao-btn:hover{opacity:.85;}
+    .lime-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:#CCFF00;color:#0a0a0a;border:none;border-radius:50px;padding:14px 20px;font-size:14px;font-weight:900;cursor:pointer;font-family:inherit;text-decoration:none;transition:opacity .2s;}
     .lime-btn:hover{opacity:.85;}
 
-    .upload-btn{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(204,255,0,.9);color:#0a0a0a;border:none;border-radius:20px;padding:6px 14px;font-size:11px;font-weight:900;cursor:pointer;white-space:nowrap;z-index:3;font-family:inherit;}
-
-    .progress-overlay{position:absolute;inset:0;background:rgba(0,0,0,.82);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:4;}
-    .progress-bar-wrap{width:72%;height:6px;background:rgba(255,255,255,.18);border-radius:3px;overflow:hidden;}
+    .upload-btn{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(204,255,0,.9);color:#0a0a0a;border:none;border-radius:16px;padding:5px 12px;font-size:10px;font-weight:900;cursor:pointer;white-space:nowrap;z-index:3;font-family:inherit;}
+    .progress-overlay{position:absolute;inset:0;background:rgba(0,0,0,.82);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:4;}
+    .progress-bar-wrap{width:72%;height:5px;background:rgba(255,255,255,.18);border-radius:3px;overflow:hidden;}
     .progress-bar-fill{height:100%;background:#CCFF00;border-radius:3px;transition:width .25s;}
 
-    @media(max-width:768px){
-      .photo-grid,.video-grid{grid-template-columns:repeat(2,1fr);padding:0 16px;}
-      .nav{padding:0 16px;}
-    }
-
-    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-    .fade-in{animation:fadeIn .35s ease;}
-    @keyframes spin{to{transform:rotate(360deg)}}
+    .section-label{font-size:12px;letter-spacing:.5em;color:rgba(204,255,0,.7);text-transform:uppercase;font-weight:700;margin-bottom:8px;}
+    .section-title{font-size:clamp(24px,2.5vw,40px);font-weight:900;margin-bottom:24px;}
+    .divider{height:1px;background:rgba(240,236,228,.08);margin:48px 0;}
   </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const {useState,useEffect,useRef} = React;
+const {useState,useEffect,useRef}=React;
+const CLOUDINARY_CLOUD="ddjdyn0yj";
+const CLOUDINARY_PRESET="lod_unsigned";
+const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbwtVcrYr-6Gth2v2OxM5XRYuIRDzHoycjXLfoMZ23AyRmcwtuFYK5YUvPzdXXUifa4G/exec";
+const IS_ADMIN=new URLSearchParams(location.search).get("admin")==="true";
+const KAKAO_LINK="https://open.kakao.com/";
+const TIKTOK_LINK="https://www.tiktok.com/@glggid";
+const YOUTUBE_LINK="https://www.youtube.com/";
 
-const CLOUDINARY_CLOUD  = "ddjdyn0yj";
-const CLOUDINARY_PRESET = "lod_unsigned";
-const APPS_SCRIPT_URL   = "https://script.google.com/macros/s/AKfycbwtVcrYr-6Gth2v2OxM5XRYuIRDzHoycjXLfoMZ23AyRmcwtuFYK5YUvPzdXXUifa4G/exec";
-const IS_ADMIN = new URLSearchParams(location.search).get("admin") === "true";
-
-const KAKAO_LINK = "https://open.kakao.com/";
-const TIKTOK_LINK = "https://www.tiktok.com/@glggid";
-const YOUTUBE_LINK = "https://www.youtube.com/";
-
-function uploadFile(file, type, onProgress){
-  const max = type==="video" ? 500*1024*1024 : 20*1024*1024;
-  if(file.size > max) return Promise.reject(new Error(`파일이 너무 큽니다.`));
+function uploadFile(file,type,onProgress){
+  const max=type==="video"?500*1024*1024:20*1024*1024;
+  if(file.size>max)return Promise.reject(new Error("파일이 너무 큽니다."));
   return new Promise((resolve,reject)=>{
-    const fd = new FormData();
-    fd.append("file", file);
-    fd.append("upload_preset", CLOUDINARY_PRESET);
-    const xhr = new XMLHttpRequest();
-    xhr.upload.onprogress = e=>{ if(e.lengthComputable&&onProgress) onProgress(Math.round(e.loaded/e.total*100)); };
-    xhr.onload = ()=>{ const r=JSON.parse(xhr.responseText); if(r.secure_url) resolve(r.secure_url); else reject(new Error("업로드 실패")); };
-    xhr.onerror = ()=>reject(new Error("연결 오류"));
-    xhr.timeout = 5*60*1000;
-    xhr.open("POST",`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/${type}/upload`);
-    xhr.send(fd);
+    const fd=new FormData();fd.append("file",file);fd.append("upload_preset",CLOUDINARY_PRESET);
+    const xhr=new XMLHttpRequest();
+    xhr.upload.onprogress=e=>{if(e.lengthComputable&&onProgress)onProgress(Math.round(e.loaded/e.total*100));};
+    xhr.onload=()=>{const r=JSON.parse(xhr.responseText);if(r.secure_url)resolve(r.secure_url);else reject(new Error("업로드 실패"));};
+    xhr.onerror=()=>reject(new Error("연결 오류"));
+    xhr.timeout=5*60*1000;
+    xhr.open("POST",`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/${type}/upload`);xhr.send(fd);
   });
 }
-
 function saveToSheet(key,value){
   return new Promise(resolve=>{
-    const name="save_"+Date.now();
-    const s=document.createElement("script");
+    const name="save_"+Date.now();const s=document.createElement("script");
     const p=new URLSearchParams({callback:name,action:"update",key,value,t:Date.now()});
     s.src=APPS_SCRIPT_URL+"?"+p.toString();
-    window[name]=(res)=>{ delete window[name]; if(document.body.contains(s)) document.body.removeChild(s); resolve(res); };
-    s.onerror=()=>{ delete window[name]; if(document.body.contains(s)) document.body.removeChild(s); resolve(null); };
-    setTimeout(()=>{ if(window[name]){ delete window[name]; if(document.body.contains(s)) document.body.removeChild(s); resolve(null); }},8000);
+    window[name]=(res)=>{delete window[name];if(document.body.contains(s))document.body.removeChild(s);resolve(res);};
+    s.onerror=()=>{delete window[name];if(document.body.contains(s))document.body.removeChild(s);resolve(null);};
+    setTimeout(()=>{if(window[name]){delete window[name];if(document.body.contains(s))document.body.removeChild(s);resolve(null);}},8000);
     document.body.appendChild(s);
   });
 }
 
-function LDLogo({size=48}){
+function LDLogo({size=60,color="#f0ece4"}){
   return(
     <svg width={size} height={size} viewBox="0 0 100 100" fill="none" style={{flexShrink:0}}>
-      <circle cx="50" cy="50" r="46" stroke="#CCFF00" strokeWidth="5" fill="none"/>
-      <text x="14" y="72" fontFamily="Georgia,serif" fontWeight="900" fontSize="62" fill="#CCFF00" letterSpacing="-2">LD</text>
+      <circle cx="50" cy="50" r="46" stroke={color} strokeWidth="5" fill="none"/>
+      <text x="14" y="72" fontFamily="Georgia,serif" fontWeight="900" fontSize="62" fill={color} letterSpacing="-2">LD</text>
     </svg>
   );
 }
 
-function PhotoCard({idx, url, onSave}){
-  const fileRef = useRef(null);
-  const [src,setSrc] = useState(url||"");
-  const [prog,setProg] = useState(0);
-  const [loading,setLoading] = useState(false);
-
-  useEffect(()=>{ if(url) setSrc(url); },[url]);
-
-  const handleFile = async(e)=>{
-    const file=e.target.files[0]; if(!file) return;
-    setLoading(true); setProg(0);
-    try{
-      const newUrl = await uploadFile(file,"image",setProg);
-      setSrc(newUrl);
-      await saveToSheet(`AI모델사진${idx+1}`,newUrl);
-      if(onSave) onSave(idx,newUrl);
-    }catch(err){ alert(err.message); }
-    finally{ setLoading(false); e.target.value=""; }
+function PhotoCard({idx,url,onSave}){
+  const fileRef=useRef(null);
+  const [src,setSrc]=useState(url||"");
+  const [prog,setProg]=useState(0);
+  const [loading,setLoading]=useState(false);
+  useEffect(()=>{if(url)setSrc(url);},[url]);
+  const handleFile=async(e)=>{
+    const file=e.target.files[0];if(!file)return;
+    setLoading(true);setProg(0);
+    try{const newUrl=await uploadFile(file,"image",setProg);setSrc(newUrl);await saveToSheet(`AI모델사진${idx+1}`,newUrl);if(onSave)onSave(idx,newUrl);}
+    catch(err){alert(err.message);}finally{setLoading(false);e.target.value="";}
   };
-
   return(
     <div className="photo-card">
-      {src
-        ?<img src={src} alt={`AI 모델 사진 ${idx+1}`}/>
+      {src?<img src={src} alt={`AI 모델 사진 ${idx+1}`}/>
         :<div className="photo-card-empty">
-          <div style={{fontSize:28,color:"rgba(204,255,0,.2)"}}>+</div>
-          <span style={{fontSize:10,color:"rgba(240,236,228,.2)",letterSpacing:".2em"}}>PHOTO {idx+1}</span>
-        </div>
-      }
-      {loading&&(
-        <div className="progress-overlay">
-          <div style={{fontSize:12,color:"#CCFF00",fontWeight:700}}>업로드 {prog}%</div>
-          <div className="progress-bar-wrap"><div className="progress-bar-fill" style={{width:prog+"%"}}/></div>
-        </div>
-      )}
-      {IS_ADMIN&&!loading&&(
-        <button className="upload-btn" onClick={()=>fileRef.current?.click()}>
-          {src?"📷 교체":"📷 업로드"}
-        </button>
-      )}
+          <div style={{fontSize:20,color:"rgba(204,255,0,.2)"}}>+</div>
+          <span style={{fontSize:9,color:"rgba(240,236,228,.15)",letterSpacing:".2em"}}>PHOTO {idx+1}</span>
+        </div>}
+      {loading&&<div className="progress-overlay"><div style={{fontSize:11,color:"#CCFF00",fontWeight:700}}>업로드 {prog}%</div><div className="progress-bar-wrap"><div className="progress-bar-fill" style={{width:prog+"%"}}/></div></div>}
+      {IS_ADMIN&&!loading&&<button className="upload-btn" onClick={()=>fileRef.current?.click()}>{src?"교체":"업로드"}</button>}
       <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleFile}/>
     </div>
   );
 }
 
-function VideoCard({idx, url, onSave}){
-  const fileRef = useRef(null);
-  const vidRef = useRef(null);
-  const [src,setSrc] = useState(url||"");
-  const [prog,setProg] = useState(0);
-  const [loading,setLoading] = useState(false);
-  const [muted,setMuted] = useState(true);
-
-  useEffect(()=>{ if(url) setSrc(url); },[url]);
-
-  const handleFile = async(e)=>{
-    const file=e.target.files[0]; if(!file) return;
-    setLoading(true); setProg(0);
-    try{
-      const newUrl = await uploadFile(file,"video",setProg);
-      setSrc(newUrl);
-      await saveToSheet(`AI모델영상${idx+1}`,newUrl);
-      if(onSave) onSave(idx,newUrl);
-    }catch(err){ alert(err.message); }
-    finally{ setLoading(false); e.target.value=""; }
+function VideoCard({idx,url,onSave}){
+  const fileRef=useRef(null);const vidRef=useRef(null);
+  const [src,setSrc]=useState(url||"");
+  const [prog,setProg]=useState(0);
+  const [loading,setLoading]=useState(false);
+  const [muted,setMuted]=useState(true);
+  useEffect(()=>{if(url)setSrc(url);},[url]);
+  const handleFile=async(e)=>{
+    const file=e.target.files[0];if(!file)return;
+    setLoading(true);setProg(0);
+    try{const newUrl=await uploadFile(file,"video",setProg);setSrc(newUrl);await saveToSheet(`AI모델영상${idx+1}`,newUrl);if(onSave)onSave(idx,newUrl);}
+    catch(err){alert(err.message);}finally{setLoading(false);e.target.value="";}
   };
-
-  const toggleMute=()=>{
-    if(!vidRef.current) return;
-    vidRef.current.muted=!muted;
-    setMuted(!muted);
-  };
-
+  const toggleMute=()=>{if(!vidRef.current)return;vidRef.current.muted=!muted;setMuted(!muted);};
   return(
     <div className="video-card">
-      {src
-        ?<>
-          <video ref={vidRef} src={src} autoPlay muted loop playsInline/>
-          <button onClick={toggleMute} style={{position:"absolute",bottom:10,right:10,background:"rgba(0,0,0,.7)",border:"none",borderRadius:20,padding:"6px 12px",cursor:"pointer",color:"#fff",fontSize:11,fontWeight:700,fontFamily:"inherit",zIndex:3}}>
-            {muted?"🔇 소리":"🔊 음소거"}
-          </button>
-        </>
+      {src?<><video ref={vidRef} src={src} autoPlay muted loop playsInline/>
+        <button onClick={toggleMute} style={{position:"absolute",bottom:8,right:8,background:"rgba(0,0,0,.7)",border:"none",borderRadius:14,padding:"5px 10px",cursor:"pointer",color:"#fff",fontSize:10,fontWeight:700,fontFamily:"inherit",zIndex:3}}>
+          {muted?"🔇 소리":"🔊 음소거"}</button></>
         :<div className="video-card-empty">
-          <div style={{fontSize:28,color:"rgba(204,255,0,.2)"}}>▶</div>
-          <span style={{fontSize:10,color:"rgba(240,236,228,.2)",letterSpacing:".2em"}}>VIDEO {idx+1}</span>
-        </div>
-      }
-      {loading&&(
-        <div className="progress-overlay">
-          <div style={{fontSize:12,color:"#CCFF00",fontWeight:700}}>업로드 {prog}%</div>
-          <div className="progress-bar-wrap"><div className="progress-bar-fill" style={{width:prog+"%"}}/></div>
-        </div>
-      )}
-      {IS_ADMIN&&!loading&&(
-        <button className="upload-btn" onClick={()=>fileRef.current?.click()}>
-          {src?"🎬 교체":"🎬 업로드"}
-        </button>
-      )}
+          <div style={{fontSize:20,color:"rgba(204,255,0,.2)"}}>▶</div>
+          <span style={{fontSize:9,color:"rgba(240,236,228,.15)",letterSpacing:".2em"}}>VIDEO {idx+1}</span>
+        </div>}
+      {loading&&<div className="progress-overlay"><div style={{fontSize:11,color:"#CCFF00",fontWeight:700}}>업로드 {prog}%</div><div className="progress-bar-wrap"><div className="progress-bar-fill" style={{width:prog+"%"}}/></div></div>}
+      {IS_ADMIN&&!loading&&<button className="upload-btn" onClick={()=>fileRef.current?.click()}>{src?"교체":"업로드"}</button>}
       <input ref={fileRef} type="file" accept="video/*" style={{display:"none"}} onChange={handleFile}/>
     </div>
   );
 }
 
 function App(){
-  const [photos,setPhotos] = useState(Array(8).fill(""));
-  const [videos,setVideos] = useState(Array(4).fill(""));
-
+  const [photos,setPhotos]=useState(Array(8).fill(""));
+  const [videos,setVideos]=useState(Array(4).fill(""));
   return(
     <div style={{minHeight:"100vh",background:"#0a0a0a"}}>
 
-      {/* 네비게이션 */}
+      {/* 네비 — 로고 + L O D · AI FASHION MODEL */}
       <div className="nav">
-        <div style={{display:"flex",alignItems:"center",gap:12}}>
-          <LDLogo size={48}/>
-          <span style={{fontSize:13,fontWeight:300,color:"rgba(240,236,228,.6)",letterSpacing:".22em",textTransform:"uppercase"}}>Layer On Drape</span>
+        <div className="nav-inner">
+          <div style={{display:"flex",alignItems:"center",gap:14}}>
+            <LDLogo size={52}/>
+            <div>
+              <div style={{fontSize:18,fontWeight:900,color:"#f0ece4",letterSpacing:".16em"}}>L O D</div>
+              <div style={{fontSize:11,fontWeight:400,color:"rgba(240,236,228,.45)",letterSpacing:".3em",textTransform:"uppercase"}}>AI Fashion Model</div>
+            </div>
+          </div>
         </div>
-        <a href={KAKAO_LINK} target="_blank" rel="noopener noreferrer" className="lime-btn" style={{padding:"10px 20px",fontSize:13}}>
-          문의하기
-        </a>
       </div>
 
-      {/* 히어로 섹션 */}
-      <div style={{padding:"80px 40px 60px",textAlign:"center"}}>
-        <div style={{fontSize:11,letterSpacing:".4em",color:"rgba(204,255,0,.6)",marginBottom:16,textTransform:"uppercase"}}>L O D · AI FASHION MODEL</div>
-        <h1 style={{fontSize:"clamp(36px,5vw,72px)",fontWeight:900,lineHeight:1.15,marginBottom:20,letterSpacing:".04em"}}>
-          인플루언서 패션<br/>AI 모델 제작
-        </h1>
-        <p style={{fontSize:"clamp(16px,2vw,22px)",color:"rgba(240,236,228,.6)",marginBottom:40,lineHeight:1.8}}>
-          실제 모델 없이 당신의 의상을 완성합니다
-        </p>
-        <a href={KAKAO_LINK} target="_blank" rel="noopener noreferrer" className="lime-btn">
-          💬 AI 모델 제작 문의하기
-        </a>
+      {/* 히어로 — 큰 로고 + 텍스트 좌우 배치 */}
+      <div className="wrap" style={{padding:"60px 40px 48px"}}>
+        <div style={{display:"flex",alignItems:"center",gap:40}}>
+          {/* 로고 — 전체 1/3 크기 */}
+          <div style={{flexShrink:0,width:"33%",display:"flex",justifyContent:"center"}}>
+            <LDLogo size={220}/>
+          </div>
+          {/* 텍스트 */}
+          <div style={{flex:1}}>
+            <div style={{fontSize:12,letterSpacing:".5em",color:"rgba(204,255,0,.7)",textTransform:"uppercase",fontWeight:700,marginBottom:14}}>
+              L O D · AI FASHION MODEL
+            </div>
+            <h1 style={{fontSize:"clamp(32px,3.5vw,60px)",fontWeight:900,lineHeight:1.15,color:"#f0ece4",marginBottom:16,letterSpacing:".02em"}}>
+              인플루언서 패션<br/>AI 모델 제작
+            </h1>
+            <p style={{fontSize:"clamp(14px,1.5vw,18px)",color:"rgba(240,236,228,.5)",lineHeight:1.9,marginBottom:32}}>
+              실제 모델 없이 당신의 의상을 완성합니다
+            </p>
+            <a href={KAKAO_LINK} target="_blank" rel="noopener noreferrer" className="kakao-btn" style={{display:"inline-flex",fontSize:16,padding:"16px 36px"}}>
+              💬 AI 모델 제작 문의하기
+            </a>
+          </div>
+        </div>
       </div>
 
       {/* 서비스 특징 */}
-      <div style={{padding:"0 40px 60px",display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:16}}>
-        {[
-          {icon:"✨",title:"자연스러운 스타일",desc:"실제 인플루언서 같은 일상적인 포즈"},
-          {icon:"⚡",title:"빠른 납기",desc:"주문 후 빠른 시간 내 결과물 제공"},
-          {icon:"💰",title:"합리적인 가격",desc:"실제 모델 촬영 비용의 일부"},
-          {icon:"📱",title:"SNS 최적화",desc:"인스타·틱톡·쇼핑몰 바로 활용"},
-        ].map((item,i)=>(
-          <div key={i} style={{background:"rgba(240,236,228,.04)",border:"1px solid rgba(240,236,228,.08)",borderRadius:16,padding:"24px 20px",textAlign:"center"}}>
-            <div style={{fontSize:32,marginBottom:12}}>{item.icon}</div>
-            <div style={{fontSize:15,fontWeight:700,color:"#CCFF00",marginBottom:8}}>{item.title}</div>
-            <div style={{fontSize:13,color:"rgba(240,236,228,.55)",lineHeight:1.7}}>{item.desc}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* 사진 섹션 */}
-      <div style={{padding:"0 40px 32px"}}>
-        <div style={{fontSize:11,letterSpacing:".4em",color:"rgba(204,255,0,.6)",marginBottom:12,textTransform:"uppercase",paddingLeft:0}}>PHOTO PORTFOLIO</div>
-        <h2 style={{fontSize:"clamp(24px,3vw,42px)",fontWeight:900,marginBottom:32}}>AI 모델 사진</h2>
-      </div>
-      <div className="photo-grid" style={{marginBottom:32}}>
-        {photos.map((url,i)=>(
-          <PhotoCard key={i} idx={i} url={url} onSave={(idx,newUrl)=>setPhotos(p=>p.map((u,j)=>j===idx?newUrl:u))}/>
-        ))}
-      </div>
-
-      {/* 틱톡 링크 */}
-      <div style={{padding:"0 40px 60px",display:"flex",justifyContent:"center"}}>
-        <a href={TIKTOK_LINK} target="_blank" rel="noopener noreferrer" className="lime-btn" style={{gap:12}}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="#0a0a0a"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg>
-          저희 틱톡에서 더 많은 사진 보기 →
-        </a>
-      </div>
-
-      {/* 영상 섹션 */}
-      <div style={{padding:"0 40px 32px"}}>
-        <div style={{fontSize:11,letterSpacing:".4em",color:"rgba(204,255,0,.6)",marginBottom:12,textTransform:"uppercase"}}>VIDEO PORTFOLIO</div>
-        <h2 style={{fontSize:"clamp(24px,3vw,42px)",fontWeight:900,marginBottom:32}}>AI 모델 영상</h2>
-      </div>
-      <div className="video-grid" style={{marginBottom:32}}>
-        {videos.map((url,i)=>(
-          <VideoCard key={i} idx={i} url={url} onSave={(idx,newUrl)=>setVideos(p=>p.map((u,j)=>j===idx?newUrl:u))}/>
-        ))}
-      </div>
-
-      {/* 유튜브 링크 */}
-      <div style={{padding:"0 40px 80px",display:"flex",justifyContent:"center"}}>
-        <a href={YOUTUBE_LINK} target="_blank" rel="noopener noreferrer" className="lime-btn" style={{gap:12}}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="#0a0a0a"><path d="M23 7s-.3-2-1.2-2.7c-1.1-1.2-2.4-1.2-3-1.3C16.6 3 12 3 12 3s-4.6 0-6.8.1c-.6.1-1.9.1-3 1.3C1.3 5 1 7 1 7S.7 9.1.7 11.2v2c0 2.1.3 4.2.3 4.2s.3 2 1.2 2.7c1.1 1.2 2.6 1.1 3.3 1.2C7.2 21.4 12 21.4 12 21.4s4.6 0 6.8-.2c.6-.1 1.9-.1 3-1.3.9-.7 1.2-2.7 1.2-2.7s.3-2.1.3-4.2v-2C23.3 9.1 23 7 23 7zM9.7 15.5V8.4l8.1 3.6-8.1 3.5z"/></svg>
-          저희 유튜브에서 영상 더 보기 →
-        </a>
-      </div>
-
-      {/* 가격 안내 */}
-      <div style={{padding:"60px 40px",background:"rgba(204,255,0,.04)",borderTop:"1px solid rgba(204,255,0,.12)",borderBottom:"1px solid rgba(204,255,0,.12)"}}>
-        <div style={{textAlign:"center",marginBottom:48}}>
-          <div style={{fontSize:11,letterSpacing:".4em",color:"rgba(204,255,0,.6)",marginBottom:12,textTransform:"uppercase"}}>PRICING</div>
-          <h2 style={{fontSize:"clamp(24px,3vw,42px)",fontWeight:900}}>가격 안내</h2>
-        </div>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:20,maxWidth:900,margin:"0 auto"}}>
+      <div className="wrap" style={{paddingBottom:0}}>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:0}}>
           {[
-            {name:"베이직",price:"5,000원",unit:"1컷",desc:"기본 AI 모델 사진\n상업적 사용 가능\nPNG 파일 제공"},
-            {name:"스탠다드",price:"12,000원",unit:"3컷",desc:"다양한 포즈 3장\n배경 선택 가능\n수정 1회 포함",highlight:true},
-            {name:"프리미엄",price:"25,000원",unit:"8컷",desc:"다양한 스타일링\n배경·포즈 자유\n수정 2회 포함"},
-          ].map((p,i)=>(
-            <div key={i} style={{background:p.highlight?"rgba(204,255,0,.1)":"rgba(240,236,228,.03)",border:p.highlight?"1px solid rgba(204,255,0,.4)":"1px solid rgba(240,236,228,.08)",borderRadius:20,padding:"32px 24px",textAlign:"center"}}>
-              {p.highlight&&<div style={{fontSize:11,color:"#CCFF00",fontWeight:900,letterSpacing:".2em",marginBottom:12}}>POPULAR</div>}
-              <div style={{fontSize:18,fontWeight:700,color:"#f0ece4",marginBottom:8}}>{p.name}</div>
-              <div style={{fontSize:"clamp(28px,3vw,42px)",fontWeight:900,color:"#CCFF00",marginBottom:4}}>{p.price}</div>
-              <div style={{fontSize:13,color:"rgba(240,236,228,.4)",marginBottom:20}}>{p.unit}</div>
-              <div style={{fontSize:13,color:"rgba(240,236,228,.7)",lineHeight:2,whiteSpace:"pre-line"}}>{p.desc}</div>
+            {icon:"✨",title:"자연스러운 스타일",desc:"실제 인플루언서 같은 일상적인 포즈"},
+            {icon:"⚡",title:"빠른 납기",desc:"주문 후 빠른 시간 내 결과물 제공"},
+            {icon:"💰",title:"합리적인 가격",desc:"실제 모델 촬영비의 일부 비용"},
+            {icon:"📱",title:"SNS 최적화",desc:"인스타·틱톡·쇼핑몰 바로 활용"},
+          ].map((item,i)=>(
+            <div key={i} style={{background:"rgba(240,236,228,.04)",border:"1px solid rgba(240,236,228,.08)",borderRadius:14,padding:"18px 14px",textAlign:"center"}}>
+              <div style={{fontSize:26,marginBottom:8}}>{item.icon}</div>
+              <div style={{fontSize:13,fontWeight:700,color:"#CCFF00",marginBottom:6}}>{item.title}</div>
+              <div style={{fontSize:12,color:"rgba(240,236,228,.45)",lineHeight:1.7}}>{item.desc}</div>
             </div>
           ))}
         </div>
+        <div className="divider"/>
       </div>
 
-      {/* 문의 섹션 */}
-      <div style={{padding:"80px 40px",textAlign:"center"}}>
-        <h2 style={{fontSize:"clamp(24px,3vw,48px)",fontWeight:900,marginBottom:16,lineHeight:1.3}}>
+      {/* 사진 섹션 */}
+      <div className="wrap">
+        <div style={{fontSize:12,letterSpacing:".5em",color:"rgba(204,255,0,.7)",textTransform:"uppercase",fontWeight:700,marginBottom:8}}>PHOTO PORTFOLIO</div>
+        <div style={{fontSize:"clamp(24px,2.5vw,40px)",fontWeight:900,marginBottom:24}}>AI 모델 사진</div>
+        <div className="grid4" style={{marginBottom:16}}>
+          {photos.map((url,i)=>(
+            <PhotoCard key={i} idx={i} url={url} onSave={(idx,newUrl)=>setPhotos(p=>p.map((u,j)=>j===idx?newUrl:u))}/>
+          ))}
+        </div>
+        {/* 버튼 — 왼쪽 카카오, 오른쪽 틱톡 */}
+        <div className="btn-row">
+          <a href={KAKAO_LINK} target="_blank" rel="noopener noreferrer" className="kakao-btn">
+            💬 카카오톡 상담 / 문의
+          </a>
+          <a href={TIKTOK_LINK} target="_blank" rel="noopener noreferrer" className="lime-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#0a0a0a"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg>
+            틱톡에서 확인하기
+          </a>
+        </div>
+        <div className="divider"/>
+      </div>
+
+      {/* 영상 섹션 */}
+      <div className="wrap">
+        <div style={{fontSize:12,letterSpacing:".5em",color:"rgba(204,255,0,.7)",textTransform:"uppercase",fontWeight:700,marginBottom:8}}>VIDEO PORTFOLIO</div>
+        <div style={{fontSize:"clamp(24px,2.5vw,40px)",fontWeight:900,marginBottom:24}}>AI 모델 영상</div>
+        <div className="grid4" style={{marginBottom:16}}>
+          {videos.map((url,i)=>(
+            <VideoCard key={i} idx={i} url={url} onSave={(idx,newUrl)=>setVideos(p=>p.map((u,j)=>j===idx?newUrl:u))}/>
+          ))}
+        </div>
+        {/* 버튼 — 왼쪽 카카오, 오른쪽 유튜브 */}
+        <div className="btn-row">
+          <a href={KAKAO_LINK} target="_blank" rel="noopener noreferrer" className="kakao-btn">
+            💬 카카오톡 상담 / 문의
+          </a>
+          <a href={YOUTUBE_LINK} target="_blank" rel="noopener noreferrer" className="lime-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#0a0a0a"><path d="M23 7s-.3-2-1.2-2.7c-1.1-1.2-2.4-1.2-3-1.3C16.6 3 12 3 12 3s-4.6 0-6.8.1c-.6.1-1.9.1-3 1.3C1.3 5 1 7 1 7S.7 9.1.7 11.2v2c0 2.1.3 4.2.3 4.2s.3 2 1.2 2.7c1.1 1.2 2.6 1.1 3.3 1.2C7.2 21.4 12 21.4 12 21.4s4.6 0 6.8-.2c.6-.1 1.9-.1 3-1.3.9-.7 1.2-2.7 1.2-2.7s.3-2.1.3-4.2v-2C23.3 9.1 23 7 23 7zM9.7 15.5V8.4l8.1 3.6-8.1 3.5z"/></svg>
+            유튜브에서 확인하기
+          </a>
+        </div>
+      </div>
+
+      {/* 문의 */}
+      <div style={{marginTop:64,background:"rgba(204,255,0,.04)",borderTop:"1px solid rgba(204,255,0,.12)",borderBottom:"1px solid rgba(204,255,0,.12)",padding:"64px 40px",textAlign:"center"}}>
+        <div style={{fontSize:12,letterSpacing:".5em",color:"rgba(204,255,0,.7)",textTransform:"uppercase",fontWeight:700,marginBottom:12}}>CONTACT</div>
+        <h2 style={{fontSize:"clamp(28px,3vw,52px)",fontWeight:900,marginBottom:14,lineHeight:1.2,color:"#f0ece4"}}>
           지금 바로 문의하세요
         </h2>
-        <p style={{fontSize:"clamp(14px,1.8vw,20px)",color:"rgba(240,236,228,.55)",marginBottom:40,lineHeight:1.8}}>
+        <p style={{fontSize:"clamp(14px,1.5vw,18px)",color:"rgba(240,236,228,.5)",marginBottom:36,lineHeight:1.9}}>
           의상 사진을 보내주시면 빠르게 견적을 안내해 드립니다
         </p>
-        <a href={KAKAO_LINK} target="_blank" rel="noopener noreferrer" className="lime-btn" style={{fontSize:18,padding:"20px 48px"}}>
+        <a href={KAKAO_LINK} target="_blank" rel="noopener noreferrer" className="kakao-btn" style={{fontSize:18,padding:"20px 52px",display:"inline-flex"}}>
           💬 카카오톡 문의하기
         </a>
       </div>
 
       {/* 푸터 */}
-      <footer style={{padding:"40px",borderTop:"1px solid rgba(240,236,228,.07)",textAlign:"center"}}>
-        <LDLogo size={40}/>
-        <div style={{fontSize:14,fontWeight:900,letterSpacing:".26em",color:"rgba(240,236,228,.3)",margin:"10px 0 6px"}}>L O D</div>
-        <p style={{fontSize:11,color:"rgba(240,236,228,.2)",lineHeight:2}}>
-          Layer On Drape · 인플루언서 패션 AI 모델 제작
+      <footer style={{padding:"44px 40px",textAlign:"center"}}>
+        <LDLogo size={48}/>
+        <div style={{fontSize:15,fontWeight:900,letterSpacing:".3em",color:"rgba(240,236,228,.22)",margin:"12px 0 6px"}}>L O D</div>
+        <p style={{fontSize:11,color:"rgba(240,236,228,.16)",lineHeight:2,letterSpacing:".08em"}}>
+          LAYER ON DRAPE · 인플루언서 패션 AI 모델 제작
         </p>
       </footer>
+
     </div>
   );
 }
