@@ -4,173 +4,380 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LOD — 인플루언서 패션 AI 모델 제작</title>
-  <meta name="description" content="의상 사진만 있으면 모델샷과 모델영상을 만들어 드립니다. LOD AI 모델 제작 서비스."/>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet"/>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    html,body{background:#0a0a0a;color:#f0ece4;font-family:'Noto Sans KR',sans-serif;overflow-x:hidden;min-height:100%;}
-    .page{width:100%;display:flex;flex-direction:column;align-items:center;}
-    #root{width:100%;min-height:100vh;background:#0a0a0a;}
-    .wrap{width:100%;max-width:1190px;margin-left:auto;margin-right:auto;padding:0 40px;box-sizing:border-box;}
-    .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
-    .photo-card{position:relative;padding-top:177.78%;background:#111;border-radius:14px;overflow:hidden;border:1px solid rgba(240,236,228,.1);cursor:pointer;transition:border-color .3s;}
-    .photo-card:hover{border-color:rgba(204,255,0,.4);}
-    .photo-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
-    .photo-card-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;}
-    .video-card{position:relative;padding-top:177.78%;background:#111;border-radius:14px;overflow:hidden;border:1px solid rgba(240,236,228,.1);}
-    .video-card video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
-    .video-card-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;}
-    .lime-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:#CCFF00;color:#0a0a0a;border:none;border-radius:50px;padding:18px 32px;font-size:17px;font-weight:900;cursor:pointer;font-family:inherit;text-decoration:none;transition:opacity .2s;flex:1;}
-    .lime-btn:hover{opacity:.85;}
-    .btn-row{display:flex;gap:12px;width:100%;}
-    .upload-btn{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(204,255,0,.9);color:#0a0a0a;border:none;border-radius:16px;padding:5px 12px;font-size:10px;font-weight:900;cursor:pointer;white-space:nowrap;z-index:3;font-family:inherit;}
-    .progress-overlay{position:absolute;inset:0;background:rgba(0,0,0,.82);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:4;}
-    .progress-bar-wrap{width:72%;height:5px;background:rgba(255,255,255,.18);border-radius:3px;overflow:hidden;}
-    .progress-bar-fill{height:100%;background:#CCFF00;border-radius:3px;transition:width .25s;}
-    .divider{height:1px;background:rgba(240,236,228,.08);margin:52px 0;}
-    .section-header{display:flex;align-items:stretch;justify-content:space-between;gap:48px;margin-bottom:24px;}
-    .section-left{flex-shrink:0;display:flex;flex-direction:column;justify-content:center;}
-    .section-main-title{font-size:clamp(36px,4vw,58px);font-weight:900;line-height:1.15;}
-    .section-sub-title{font-size:clamp(16px,2vw,24px);color:rgba(204,255,0,.8);font-weight:700;letter-spacing:.14em;margin-top:8px;}
-    .section-right{flex:1;display:flex;flex-direction:column;justify-content:center;gap:0;}
-    .section-desc-item{font-size:clamp(15px,1.6vw,20px);color:rgba(240,236,228,.7);line-height:2.2;display:flex;align-items:flex-start;gap:10px;}
-    .section-desc-item::before{content:"—";color:rgba(204,255,0,.6);flex-shrink:0;font-weight:700;}
-    .service-wrap{background:rgba(240,236,228,.03);border:1px solid rgba(240,236,228,.08);border-radius:20px;padding:40px;}
-    .service-intro{font-size:16px;color:rgba(240,236,228,.7);line-height:2.1;margin-bottom:36px;border-left:3px solid #CCFF00;padding-left:20px;}
-    .service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:32px;}
-    .service-block-title{font-size:16px;font-weight:900;color:#CCFF00;margin-bottom:12px;}
-    .service-block-item{font-size:13px;color:rgba(240,236,228,.65);line-height:2;display:flex;align-items:flex-start;gap:6px;}
-    .service-block-item::before{content:"—";color:rgba(204,255,0,.4);flex-shrink:0;}
-    .service-notice{border-top:1px solid rgba(240,236,228,.08);padding-top:24px;display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
-    .notice-item{font-size:13px;color:rgba(240,236,228,.45);line-height:1.9;display:flex;gap:8px;}
-    .notice-item::before{content:"·";color:rgba(204,255,0,.4);flex-shrink:0;}
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: #0a0a0a;
+      color: #f0ece4;
+      font-family: 'Noto Sans KR', sans-serif;
+      overflow-x: hidden;
+      min-height: 100%;
+    }
+    /* 전체 페이지 중앙 정렬 */
+    .page {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #0a0a0a;
+      min-height: 100vh;
+    }
+    /* 콘텐츠 최대 폭 */
+    .wrap {
+      width: 100%;
+      max-width: 1190px;
+      padding: 0 40px;
+    }
+    .grid4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .photo-card {
+      position: relative;
+      padding-top: 177.78%;
+      background: #111;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(240,236,228,.1);
+      cursor: pointer;
+      transition: border-color .3s;
+    }
+    .photo-card:hover { border-color: rgba(204,255,0,.4); }
+    .photo-card img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    .card-empty {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 6px;
+    }
+    .video-card {
+      position: relative;
+      padding-top: 177.78%;
+      background: #111;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(240,236,228,.1);
+    }
+    .video-card video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    .lime-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: #CCFF00;
+      color: #0a0a0a;
+      border: none;
+      border-radius: 50px;
+      padding: 18px 32px;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      font-family: inherit;
+      text-decoration: none;
+      transition: opacity .2s;
+      flex: 1;
+    }
+    .lime-btn:hover { opacity: .85; }
+    .btn-row { display: flex; gap: 12px; width: 100%; }
+    .upload-btn {
+      position: absolute;
+      bottom: 8px; left: 50%;
+      transform: translateX(-50%);
+      background: rgba(204,255,0,.9);
+      color: #0a0a0a;
+      border: none;
+      border-radius: 16px;
+      padding: 5px 12px;
+      font-size: 10px;
+      font-weight: 900;
+      cursor: pointer;
+      white-space: nowrap;
+      z-index: 3;
+      font-family: inherit;
+    }
+    .progress-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,.82);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 10px; z-index: 4;
+    }
+    .progress-bar-wrap {
+      width: 72%; height: 5px;
+      background: rgba(255,255,255,.18);
+      border-radius: 3px; overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%; background: #CCFF00;
+      border-radius: 3px; transition: width .25s;
+    }
+    .divider { height: 1px; background: rgba(240,236,228,.08); margin: 52px 0; }
+    .section-header {
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      gap: 48px;
+      margin-bottom: 24px;
+    }
+    .section-left {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .section-main-title {
+      font-size: clamp(36px, 4vw, 58px);
+      font-weight: 900;
+      line-height: 1.15;
+    }
+    .section-sub-title {
+      font-size: clamp(16px, 2vw, 24px);
+      color: rgba(204,255,0,.8);
+      font-weight: 700;
+      letter-spacing: .14em;
+      margin-top: 8px;
+    }
+    .section-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .section-desc-item {
+      font-size: clamp(15px, 1.6vw, 20px);
+      color: rgba(240,236,228,.7);
+      line-height: 2.2;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .section-desc-item::before {
+      content: "—";
+      color: rgba(204,255,0,.6);
+      flex-shrink: 0;
+      font-weight: 700;
+    }
+    .service-wrap {
+      background: rgba(240,236,228,.03);
+      border: 1px solid rgba(240,236,228,.08);
+      border-radius: 20px;
+      padding: 40px;
+    }
+    .service-intro {
+      font-size: 16px;
+      color: rgba(240,236,228,.7);
+      line-height: 2.1;
+      margin-bottom: 36px;
+      border-left: 3px solid #CCFF00;
+      padding-left: 20px;
+    }
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    .service-block-title { font-size: 16px; font-weight: 900; color: #CCFF00; margin-bottom: 12px; }
+    .service-block-item {
+      font-size: 13px;
+      color: rgba(240,236,228,.65);
+      line-height: 2;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .service-block-item::before { content: "—"; color: rgba(204,255,0,.4); flex-shrink: 0; }
+    .service-notice {
+      border-top: 1px solid rgba(240,236,228,.08);
+      padding-top: 24px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .notice-item {
+      font-size: 13px;
+      color: rgba(240,236,228,.45);
+      line-height: 1.9;
+      display: flex;
+      gap: 8px;
+    }
+    .notice-item::before { content: "·"; color: rgba(204,255,0,.4); flex-shrink: 0; }
   </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const {useState,useEffect,useRef}=React;
-const CLOUDINARY_CLOUD="ddjdyn0yj";
-const CLOUDINARY_PRESET="lod_unsigned";
-const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbwtVcrYr-6Gth2v2OxM5XRYuIRDzHoycjXLfoMZ23AyRmcwtuFYK5YUvPzdXXUifa4G/exec";
-const IS_ADMIN=new URLSearchParams(location.search).get("admin")==="true";
-const KAKAO_LINK="https://open.kakao.com/";
-const TIKTOK_LINK="https://www.tiktok.com/@glggid";
-const YOUTUBE_LINK="https://www.youtube.com/";
+const { useState, useEffect, useRef } = React;
 
-function uploadFile(file,type,onProgress){
-  const max=type==="video"?500*1024*1024:20*1024*1024;
-  if(file.size>max)return Promise.reject(new Error("파일이 너무 큽니다."));
-  return new Promise((resolve,reject)=>{
-    const fd=new FormData();fd.append("file",file);fd.append("upload_preset",CLOUDINARY_PRESET);
-    const xhr=new XMLHttpRequest();
-    xhr.upload.onprogress=e=>{if(e.lengthComputable&&onProgress)onProgress(Math.round(e.loaded/e.total*100));};
-    xhr.onload=()=>{const r=JSON.parse(xhr.responseText);if(r.secure_url)resolve(r.secure_url);else reject(new Error("업로드 실패"));};
-    xhr.onerror=()=>reject(new Error("연결 오류"));
-    xhr.timeout=5*60*1000;
-    xhr.open("POST",`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/${type}/upload`);xhr.send(fd);
+const CLOUDINARY_CLOUD = "ddjdyn0yj";
+const CLOUDINARY_PRESET = "lod_unsigned";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwtVcrYr-6Gth2v2OxM5XRYuIRDzHoycjXLfoMZ23AyRmcwtuFYK5YUvPzdXXUifa4G/exec";
+const IS_ADMIN = new URLSearchParams(location.search).get("admin") === "true";
+const KAKAO_LINK = "https://open.kakao.com/";
+const TIKTOK_LINK = "https://www.tiktok.com/@glggid";
+const YOUTUBE_LINK = "https://www.youtube.com/";
+
+function uploadFile(file, type, onProgress) {
+  const max = type === "video" ? 500*1024*1024 : 20*1024*1024;
+  if (file.size > max) return Promise.reject(new Error("파일이 너무 큽니다."));
+  return new Promise((resolve, reject) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("upload_preset", CLOUDINARY_PRESET);
+    const xhr = new XMLHttpRequest();
+    xhr.upload.onprogress = e => { if (e.lengthComputable && onProgress) onProgress(Math.round(e.loaded/e.total*100)); };
+    xhr.onload = () => { const r = JSON.parse(xhr.responseText); if (r.secure_url) resolve(r.secure_url); else reject(new Error("업로드 실패")); };
+    xhr.onerror = () => reject(new Error("연결 오류"));
+    xhr.timeout = 5*60*1000;
+    xhr.open("POST", `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/${type}/upload`);
+    xhr.send(fd);
   });
 }
-function saveToSheet(key,value){
-  return new Promise(resolve=>{
-    const name="save_"+Date.now();const s=document.createElement("script");
-    const p=new URLSearchParams({callback:name,action:"update",key,value,t:Date.now()});
-    s.src=APPS_SCRIPT_URL+"?"+p.toString();
-    window[name]=(res)=>{delete window[name];if(document.body.contains(s))document.body.removeChild(s);resolve(res);};
-    s.onerror=()=>{delete window[name];if(document.body.contains(s))document.body.removeChild(s);resolve(null);};
-    setTimeout(()=>{if(window[name]){delete window[name];if(document.body.contains(s))document.body.removeChild(s);resolve(null);}},8000);
+
+function saveToSheet(key, value) {
+  return new Promise(resolve => {
+    const name = "save_" + Date.now();
+    const s = document.createElement("script");
+    const p = new URLSearchParams({ callback: name, action: "update", key, value, t: Date.now() });
+    s.src = APPS_SCRIPT_URL + "?" + p.toString();
+    window[name] = res => { delete window[name]; if (document.body.contains(s)) document.body.removeChild(s); resolve(res); };
+    s.onerror = () => { delete window[name]; if (document.body.contains(s)) document.body.removeChild(s); resolve(null); };
+    setTimeout(() => { if (window[name]) { delete window[name]; if (document.body.contains(s)) document.body.removeChild(s); resolve(null); } }, 8000);
     document.body.appendChild(s);
   });
 }
 
-function LDLogo({size=160}){
-  return(
-    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" style={{flexShrink:0}}>
+function LDLogo({ size = 160 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" style={{ flexShrink: 0 }}>
       <circle cx="50" cy="50" r="46" stroke="#f0ece4" strokeWidth="4" fill="none"/>
       <text x="50" y="66" textAnchor="middle" fontFamily="Georgia,serif" fontWeight="900" fontSize="52" fill="#f0ece4">LD</text>
     </svg>
   );
 }
 
-function PhotoCard({idx,url,onSave}){
-  const fileRef=useRef(null);
-  const [src,setSrc]=useState(url||"");
-  const [prog,setProg]=useState(0);
-  const [loading,setLoading]=useState(false);
-  useEffect(()=>{if(url)setSrc(url);},[url]);
-  const handleFile=async(e)=>{
-    const file=e.target.files[0];if(!file)return;
-    setLoading(true);setProg(0);
-    try{const newUrl=await uploadFile(file,"image",setProg);setSrc(newUrl);await saveToSheet(`AI모델사진${idx+1}`,newUrl);if(onSave)onSave(idx,newUrl);}
-    catch(err){alert(err.message);}finally{setLoading(false);e.target.value="";}
+function PhotoCard({ idx, url, onSave }) {
+  const fileRef = useRef(null);
+  const [src, setSrc] = useState(url || "");
+  const [prog, setProg] = useState(0);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => { if (url) setSrc(url); }, [url]);
+  const handleFile = async e => {
+    const file = e.target.files[0]; if (!file) return;
+    setLoading(true); setProg(0);
+    try {
+      const newUrl = await uploadFile(file, "image", setProg);
+      setSrc(newUrl);
+      await saveToSheet(`AI모델사진${idx+1}`, newUrl);
+      if (onSave) onSave(idx, newUrl);
+    } catch (err) { alert(err.message); }
+    finally { setLoading(false); e.target.value = ""; }
   };
-  return(
+  return (
     <div className="photo-card">
-      {src?<img src={src} alt={`AI 모델 사진 ${idx+1}`}/>
-        :<div className="photo-card-empty">
-          <div style={{fontSize:22,color:"rgba(204,255,0,.2)"}}>+</div>
-          <span style={{fontSize:9,color:"rgba(240,236,228,.15)",letterSpacing:".2em"}}>PHOTO {idx+1}</span>
-        </div>}
-      {loading&&<div className="progress-overlay"><div style={{fontSize:11,color:"#CCFF00",fontWeight:700}}>업로드 {prog}%</div><div className="progress-bar-wrap"><div className="progress-bar-fill" style={{width:prog+"%"}}/></div></div>}
-      {IS_ADMIN&&!loading&&<button className="upload-btn" onClick={()=>fileRef.current?.click()}>{src?"교체":"업로드"}</button>}
-      <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleFile}/>
+      {src
+        ? <img src={src} alt={`AI 모델 사진 ${idx+1}`}/>
+        : <div className="card-empty">
+            <div style={{ fontSize: 22, color: "rgba(204,255,0,.2)" }}>+</div>
+            <span style={{ fontSize: 9, color: "rgba(240,236,228,.15)", letterSpacing: ".2em" }}>PHOTO {idx+1}</span>
+          </div>
+      }
+      {loading && (
+        <div className="progress-overlay">
+          <div style={{ fontSize: 11, color: "#CCFF00", fontWeight: 700 }}>업로드 {prog}%</div>
+          <div className="progress-bar-wrap"><div className="progress-bar-fill" style={{ width: prog+"%" }}/></div>
+        </div>
+      )}
+      {IS_ADMIN && !loading && (
+        <button className="upload-btn" onClick={() => fileRef.current?.click()}>{src ? "교체" : "업로드"}</button>
+      )}
+      <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handleFile}/>
     </div>
   );
 }
 
-function VideoCard({idx,url,onSave}){
-  const fileRef=useRef(null);const vidRef=useRef(null);
-  const [src,setSrc]=useState(url||"");
-  const [prog,setProg]=useState(0);
-  const [loading,setLoading]=useState(false);
-  const [muted,setMuted]=useState(true);
-  useEffect(()=>{if(url)setSrc(url);},[url]);
-  const handleFile=async(e)=>{
-    const file=e.target.files[0];if(!file)return;
-    setLoading(true);setProg(0);
-    try{const newUrl=await uploadFile(file,"video",setProg);setSrc(newUrl);await saveToSheet(`AI모델영상${idx+1}`,newUrl);if(onSave)onSave(idx,newUrl);}
-    catch(err){alert(err.message);}finally{setLoading(false);e.target.value="";}
+function VideoCard({ idx, url, onSave }) {
+  const fileRef = useRef(null);
+  const vidRef = useRef(null);
+  const [src, setSrc] = useState(url || "");
+  const [prog, setProg] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [muted, setMuted] = useState(true);
+  useEffect(() => { if (url) setSrc(url); }, [url]);
+  const handleFile = async e => {
+    const file = e.target.files[0]; if (!file) return;
+    setLoading(true); setProg(0);
+    try {
+      const newUrl = await uploadFile(file, "video", setProg);
+      setSrc(newUrl);
+      await saveToSheet(`AI모델영상${idx+1}`, newUrl);
+      if (onSave) onSave(idx, newUrl);
+    } catch (err) { alert(err.message); }
+    finally { setLoading(false); e.target.value = ""; }
   };
-  const toggleMute=()=>{if(!vidRef.current)return;vidRef.current.muted=!muted;setMuted(!muted);};
-  return(
+  const toggleMute = () => { if (!vidRef.current) return; vidRef.current.muted = !muted; setMuted(!muted); };
+  return (
     <div className="video-card">
-      {src?<><video ref={vidRef} src={src} autoPlay muted loop playsInline/>
-        <button onClick={toggleMute} style={{position:"absolute",bottom:8,right:8,background:"rgba(0,0,0,.7)",border:"none",borderRadius:14,padding:"5px 10px",cursor:"pointer",color:"#fff",fontSize:10,fontWeight:700,fontFamily:"inherit",zIndex:3}}>
-          {muted?"🔇 소리":"🔊 음소거"}</button></>
-        :<div className="video-card-empty">
-          <div style={{fontSize:22,color:"rgba(204,255,0,.2)"}}>▶</div>
-          <span style={{fontSize:9,color:"rgba(240,236,228,.15)",letterSpacing:".2em"}}>VIDEO {idx+1}</span>
-        </div>}
-      {loading&&<div className="progress-overlay"><div style={{fontSize:11,color:"#CCFF00",fontWeight:700}}>업로드 {prog}%</div><div className="progress-bar-wrap"><div className="progress-bar-fill" style={{width:prog+"%"}}/></div></div>}
-      {IS_ADMIN&&!loading&&<button className="upload-btn" onClick={()=>fileRef.current?.click()}>{src?"교체":"업로드"}</button>}
-      <input ref={fileRef} type="file" accept="video/*" style={{display:"none"}} onChange={handleFile}/>
+      {src
+        ? <>
+            <video ref={vidRef} src={src} autoPlay muted loop playsInline/>
+            <button onClick={toggleMute} style={{ position:"absolute", bottom:8, right:8, background:"rgba(0,0,0,.7)", border:"none", borderRadius:14, padding:"5px 10px", cursor:"pointer", color:"#fff", fontSize:10, fontWeight:700, fontFamily:"inherit", zIndex:3 }}>
+              {muted ? "🔇 소리" : "🔊 음소거"}
+            </button>
+          </>
+        : <div className="card-empty">
+            <div style={{ fontSize: 22, color: "rgba(204,255,0,.2)" }}>▶</div>
+            <span style={{ fontSize: 9, color: "rgba(240,236,228,.15)", letterSpacing: ".2em" }}>VIDEO {idx+1}</span>
+          </div>
+      }
+      {loading && (
+        <div className="progress-overlay">
+          <div style={{ fontSize: 11, color: "#CCFF00", fontWeight: 700 }}>업로드 {prog}%</div>
+          <div className="progress-bar-wrap"><div className="progress-bar-fill" style={{ width: prog+"%" }}/></div>
+        </div>
+      )}
+      {IS_ADMIN && !loading && (
+        <button className="upload-btn" onClick={() => fileRef.current?.click()}>{src ? "교체" : "업로드"}</button>
+      )}
+      <input ref={fileRef} type="file" accept="video/*" style={{ display: "none" }} onChange={handleFile}/>
     </div>
   );
 }
 
-function App(){
-  const [photos,setPhotos]=useState(Array(8).fill(""));
-  const [videos,setVideos]=useState(Array(4).fill(""));
-  return(
-    <div className="page" style={{minHeight:"100vh",background:"#0a0a0a"}}>
+function App() {
+  const [photos, setPhotos] = useState(Array(8).fill(""));
+  const [videos, setVideos] = useState(Array(4).fill(""));
 
-      {/* 히어로 — 로고 왼쪽 크게, 타이틀 오른쪽 나란히 */}
-      <div style={{width:"100%",display:"flex",justifyContent:"center",background:"#0a0a0a"}}><div style={{width:"100%",maxWidth:1190,padding:"80px 40px 72px"}}>
-        <div style={{display:"flex",alignItems:"center",gap:48}}>
+  return (
+    <div className="page">
+
+      {/* 히어로 */}
+      <div className="wrap" style={{ padding: "80px 40px 72px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 48 }}>
           <LDLogo size={180}/>
           <div>
-            <div style={{fontSize:"clamp(14px,1.4vw,18px)",letterSpacing:".5em",color:"rgba(204,255,0,.8)",fontWeight:700,textTransform:"uppercase",marginBottom:16}}>
+            <div style={{ fontSize: "clamp(14px,1.4vw,18px)", letterSpacing: ".5em", color: "rgba(204,255,0,.8)", fontWeight: 700, textTransform: "uppercase", marginBottom: 16 }}>
               AI FASHION MODEL
             </div>
-            <h1 style={{fontSize:"clamp(40px,5.5vw,80px)",fontWeight:900,lineHeight:1.1,marginBottom:24,color:"#f0ece4"}}>
+            <h1 style={{ fontSize: "clamp(40px,5.5vw,80px)", fontWeight: 900, lineHeight: 1.1, marginBottom: 24, color: "#f0ece4" }}>
               인플루언서 패션<br/>AI 모델 제작
             </h1>
-            <p style={{fontSize:"clamp(16px,1.8vw,22px)",lineHeight:1.9}}>
-              <span style={{color:"#CCFF00",fontWeight:700}}>의상 사진만 있으면</span>
-              <span style={{color:"rgba(240,236,228,.65)"}}> 모델샷과 모델영상을 만들어 드립니다.</span>
+            <p style={{ fontSize: "clamp(16px,1.8vw,22px)", lineHeight: 1.9 }}>
+              <span style={{ color: "#CCFF00", fontWeight: 700 }}>의상 사진만 있으면</span>
+              <span style={{ color: "rgba(240,236,228,.65)" }}> 모델샷과 모델영상을 만들어 드립니다.</span>
             </p>
           </div>
         </div>
@@ -189,18 +396,16 @@ function App(){
               "저작권 걱정 없는 자연스러운 모델을 원하시는 분",
               "기존 AI 모델보다 실제 인플루언서 같은 이미지를 원하시는 분",
               "신상마켓·쇼핑몰 상품 사진이 필요하신 분",
-            ].map((t,i)=><div key={i} className="section-desc-item">{t}</div>)}
+            ].map((t, i) => <div key={i} className="section-desc-item">{t}</div>)}
           </div>
         </div>
-        <div className="grid4" style={{marginBottom:20}}>
-          {photos.map((url,i)=>(
-            <PhotoCard key={i} idx={i} url={url} onSave={(idx,newUrl)=>setPhotos(p=>p.map((u,j)=>j===idx?newUrl:u))}/>
+        <div className="grid4" style={{ marginBottom: 20 }}>
+          {photos.map((url, i) => (
+            <PhotoCard key={i} idx={i} url={url} onSave={(idx, newUrl) => setPhotos(p => p.map((u, j) => j===idx ? newUrl : u))}/>
           ))}
         </div>
         <div className="btn-row">
-          <a href={KAKAO_LINK} target="_blank" rel="noopener noreferrer" className="lime-btn">
-            💬 카카오톡 상담
-          </a>
+          <a href={KAKAO_LINK} target="_blank" rel="noopener noreferrer" className="lime-btn">💬 카카오톡 상담</a>
           <a href={TIKTOK_LINK} target="_blank" rel="noopener noreferrer" className="lime-btn">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="#0a0a0a"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg>
             틱톡에서 확인하기
@@ -221,18 +426,16 @@ function App(){
               "영업소·매장 홍보 영상 제작비가 부담되시는 분",
               "SNS 광고 영상이 필요한데 촬영 일정 잡기 어려우신 분",
               "틱톡·인스타 릴스용 짧은 패션 영상이 필요하신 분",
-            ].map((t,i)=><div key={i} className="section-desc-item">{t}</div>)}
+            ].map((t, i) => <div key={i} className="section-desc-item">{t}</div>)}
           </div>
         </div>
-        <div className="grid4" style={{marginBottom:20}}>
-          {videos.map((url,i)=>(
-            <VideoCard key={i} idx={i} url={url} onSave={(idx,newUrl)=>setVideos(p=>p.map((u,j)=>j===idx?newUrl:u))}/>
+        <div className="grid4" style={{ marginBottom: 20 }}>
+          {videos.map((url, i) => (
+            <VideoCard key={i} idx={i} url={url} onSave={(idx, newUrl) => setVideos(p => p.map((u, j) => j===idx ? newUrl : u))}/>
           ))}
         </div>
         <div className="btn-row">
-          <a href={KAKAO_LINK} target="_blank" rel="noopener noreferrer" className="lime-btn">
-            💬 카카오톡 상담
-          </a>
+          <a href={KAKAO_LINK} target="_blank" rel="noopener noreferrer" className="lime-btn">💬 카카오톡 상담</a>
           <a href={YOUTUBE_LINK} target="_blank" rel="noopener noreferrer" className="lime-btn">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="#0a0a0a"><path d="M23 7s-.3-2-1.2-2.7c-1.1-1.2-2.4-1.2-3-1.3C16.6 3 12 3 12 3s-4.6 0-6.8.1c-.6.1-1.9.1-3 1.3C1.3 5 1 7 1 7S.7 9.1.7 11.2v2c0 2.1.3 4.2.3 4.2s.3 2 1.2 2.7c1.1 1.2 2.6 1.1 3.3 1.2C7.2 21.4 12 21.4 12 21.4s4.6 0 6.8-.2c.6-.1 1.9-.1 3-1.3.9-.7 1.2-2.7 1.2-2.7s.3-2.1.3-4.2v-2C23.3 9.1 23 7 23 7zM9.7 15.5V8.4l8.1 3.6-8.1 3.5z"/></svg>
             유튜브에서 확인하기
@@ -242,7 +445,7 @@ function App(){
       </div>
 
       {/* 서비스 설명 */}
-      <div className="wrap" style={{paddingBottom:64}}>
+      <div className="wrap" style={{ paddingBottom: 64 }}>
         <div className="service-wrap">
           <p className="service-intro">
             의상 사진만 보내주시면 자연스러운 인플루언서 스타일의 모델샷과 모델영상을 제작해드립니다.<br/>
@@ -251,42 +454,42 @@ function App(){
           <div className="service-grid">
             <div>
               <div className="service-block-title">📷 사진이 필요하신 분</div>
-              {["예쁜 모델 사진이 필요한데 촬영이 부담스러운 분","저작권 걱정 없는 자연스러운 모델을 원하시는 분","기존 AI 모델보다 실제 인플루언서 같은 이미지를 원하시는 분","신상마켓·쇼핑몰 상품 사진이 필요하신 분"].map((t,i)=><div key={i} className="service-block-item">{t}</div>)}
+              {["예쁜 모델 사진이 필요한데 촬영이 부담스러운 분","저작권 걱정 없는 자연스러운 모델을 원하시는 분","기존 AI 모델보다 실제 인플루언서 같은 이미지를 원하시는 분","신상마켓·쇼핑몰 상품 사진이 필요하신 분"].map((t, i) => <div key={i} className="service-block-item">{t}</div>)}
             </div>
             <div>
               <div className="service-block-title">🎬 영상이 필요하신 분</div>
-              {["영업소·매장 홍보 영상 제작비가 부담되시는 분","SNS 광고 영상이 필요한데 촬영 일정 잡기 어려우신 분","틱톡·인스타 릴스용 짧은 패션 영상이 필요하신 분"].map((t,i)=><div key={i} className="service-block-item">{t}</div>)}
+              {["영업소·매장 홍보 영상 제작비가 부담되시는 분","SNS 광고 영상이 필요한데 촬영 일정 잡기 어려우신 분","틱톡·인스타 릴스용 짧은 패션 영상이 필요하신 분"].map((t, i) => <div key={i} className="service-block-item">{t}</div>)}
             </div>
             <div>
               <div className="service-block-title">📋 준비사항</div>
-              {["의상 또는 제품 사진 (실제 촬영본)","성별 / 연령대","원하시는 분위기 또는 참고 사진·영상"].map((t,i)=><div key={i} className="service-block-item">{t}</div>)}
+              {["의상 또는 제품 사진 (실제 촬영본)","성별 / 연령대","원하시는 분위기 또는 참고 사진·영상"].map((t, i) => <div key={i} className="service-block-item">{t}</div>)}
             </div>
           </div>
           <div className="service-notice">
-            {["제작된 이미지·영상 상업적 사용 가능","독점 라이선스 / 영구 사용 가능","실사체·실존 인물 대상 의뢰는 거부될 수 있습니다","이미지 전송 후 단순 변심에 의한 환불·교환 불가"].map((t,i)=><div key={i} className="notice-item">{t}</div>)}
+            {["제작된 이미지·영상 상업적 사용 가능","독점 라이선스 / 영구 사용 가능","실사체·실존 인물 대상 의뢰는 거부될 수 있습니다","이미지 전송 후 단순 변심에 의한 환불·교환 불가"].map((t, i) => <div key={i} className="notice-item">{t}</div>)}
           </div>
         </div>
       </div>
 
       {/* 문의 */}
-      <div style={{background:"rgba(204,255,0,.04)",borderTop:"1px solid rgba(204,255,0,.12)",borderBottom:"1px solid rgba(204,255,0,.12)",padding:"72px 40px",textAlign:"center"}}>
-        <div style={{fontSize:13,letterSpacing:".5em",color:"rgba(204,255,0,.7)",fontWeight:700,textTransform:"uppercase",marginBottom:16}}>CONTACT</div>
-        <h2 style={{fontSize:"clamp(32px,3.5vw,56px)",fontWeight:900,marginBottom:16,lineHeight:1.2,color:"#f0ece4"}}>
+      <div style={{ width:"100%", background:"rgba(204,255,0,.04)", borderTop:"1px solid rgba(204,255,0,.12)", borderBottom:"1px solid rgba(204,255,0,.12)", padding:"72px 40px", textAlign:"center" }}>
+        <div style={{ fontSize:13, letterSpacing:".5em", color:"rgba(204,255,0,.7)", fontWeight:700, textTransform:"uppercase", marginBottom:16 }}>CONTACT</div>
+        <h2 style={{ fontSize:"clamp(32px,3.5vw,56px)", fontWeight:900, marginBottom:16, lineHeight:1.2, color:"#f0ece4" }}>
           지금 바로 문의하세요
         </h2>
-        <p style={{fontSize:"clamp(15px,1.8vw,20px)",color:"rgba(240,236,228,.5)",marginBottom:40,lineHeight:1.9}}>
+        <p style={{ fontSize:"clamp(15px,1.8vw,20px)", color:"rgba(240,236,228,.5)", marginBottom:40, lineHeight:1.9 }}>
           의상 사진을 보내주시면 빠르게 견적을 안내해 드립니다
         </p>
-        <a href={KAKAO_LINK} target="_blank" rel="noopener noreferrer" className="lime-btn" style={{fontSize:20,padding:"22px 56px",flex:"none"}}>
+        <a href={KAKAO_LINK} target="_blank" rel="noopener noreferrer" className="lime-btn" style={{ fontSize:20, padding:"22px 56px", flex:"none" }}>
           💬 카카오톡 문의하기
         </a>
       </div>
 
       {/* 푸터 */}
-      <footer style={{padding:"48px 40px",textAlign:"center"}}>
+      <footer style={{ width:"100%", padding:"48px 40px", textAlign:"center" }}>
         <LDLogo size={48}/>
-        <div style={{fontSize:15,fontWeight:900,letterSpacing:".3em",color:"rgba(240,236,228,.22)",margin:"12px 0 8px"}}>L O D</div>
-        <p style={{fontSize:12,color:"rgba(240,236,228,.16)",lineHeight:2,letterSpacing:".08em"}}>
+        <div style={{ fontSize:15, fontWeight:900, letterSpacing:".3em", color:"rgba(240,236,228,.22)", margin:"12px 0 8px" }}>L O D</div>
+        <p style={{ fontSize:12, color:"rgba(240,236,228,.16)", lineHeight:2, letterSpacing:".08em" }}>
           LAYER ON DRAPE · 인플루언서 패션 AI 모델 제작
         </p>
       </footer>
@@ -294,6 +497,7 @@ function App(){
     </div>
   );
 }
+
 ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
 </body>
