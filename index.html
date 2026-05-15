@@ -10,23 +10,27 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
+    html {
       background: #0a0a0a;
       color: #f0ece4;
       font-family: 'Noto Sans KR', sans-serif;
       overflow-x: hidden;
       min-height: 100%;
     }
+    body {
+      background: #0a0a0a;
+      width: 100%;
+      min-height: 100vh;
+    }
     /* 전체 페이지 중앙 정렬 */
     .page {
-      width: 100%;
+      width: 100vw;
       background: #0a0a0a;
       min-height: 100vh;
     }
     /* 콘텐츠 최대 폭 — 중앙 정렬 */
     .wrap {
-      width: 100%;
-      max-width: 1190px;
+      width: 1190px;
       margin-left: auto;
       margin-right: auto;
       padding: 0 40px;
