@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8"/>
@@ -287,7 +287,7 @@ function App(){
           <LDLogo size={180}/>
           <div style={{textAlign:"left"}}>
             <h1 style={{fontSize:"clamp(40px,5vw,76px)",fontWeight:900,lineHeight:1.1,marginBottom:24,color:"#f0ece4"}}>
-              <span id="typing-text"></span>
+              인플루언서 패션<br/>AI 모델 제작
             </h1>
             <p style={{fontSize:"clamp(16px,1.8vw,22px)",lineHeight:1.9}}>
               <span style={{color:"#CCFF00",fontWeight:700}}>의상 사진만 있으면</span>
@@ -419,17 +419,6 @@ window.addEventListener("scroll",()=>{
   sb.style.width=pct+"%";
 });
 
-// 1번 타이핑 효과
-const lines=["인플루언서 패션","AI 모델 제작"];
-let li=0,ci=0,txt="";
-const el=document.getElementById("typing-text");
-function type(){
-  if(!el)return;
-  if(ci<lines[li].length){txt+=lines[li][ci++];el.innerHTML=txt.replace("\n","<br/>");setTimeout(type,80);}
-  else if(li<lines.length-1){li++;txt+="<br/>";ci=0;setTimeout(type,400);}
-}
-setTimeout(type,600);
-
 // 2번 ripple 효과
 document.addEventListener("click",function(e){
   const btn=e.target.closest(".lime-btn");
@@ -482,4 +471,3 @@ document.querySelectorAll(".inner,.service-wrap,.section-header").forEach((el,i)
 </script>
 </body>
 </html>
-       
