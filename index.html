@@ -24,15 +24,21 @@
     }
     /* 전체 페이지 중앙 정렬 */
     .page {
-      width: 100vw;
-      background: #0a0a0a;
+      width: 100%;
       min-height: 100vh;
+      background: #0a0a0a;
+      display: flex;
+      justify-content: center;
     }
-    /* 콘텐츠 최대 폭 — 중앙 정렬 */
+    .shell {
+      width: 100%;
+      max-width: 1190px;
+      min-height: 100vh;
+      background: #0a0a0a;
+      box-shadow: 1px 0 0 rgba(240,236,228,.12), -1px 0 0 rgba(240,236,228,.12);
+    }
     .wrap {
-      width: 1190px;
-      margin-left: auto;
-      margin-right: auto;
+      width: 100%;
       padding: 0 40px;
     }
     .grid4 {
@@ -365,7 +371,7 @@ function App() {
   const [videos, setVideos] = useState(Array(4).fill(""));
 
   return (
-    <div style={{position:"fixed",top:0,left:0,width:"100vw",height:"100vh",overflowY:"auto",background:"#0a0a0a"}}><div style={{maxWidth:1190,margin:"0 auto",padding:0}}>
+    <div className="page"><div className="shell">
 
       {/* 히어로 */}
       <div className="wrap" style={{ padding: "80px 40px 72px" }}>
