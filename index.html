@@ -47,7 +47,18 @@ html,body{
   grid-template-columns:repeat(4,1fr);
   gap:10px;
 }
-/* 3번 스크롤 진행 바 */
+/* shimmer 카드 테두리 */
+.photo-card::after,.video-card::after{content:"";position:absolute;inset:0;border-radius:14px;padding:1px;background:linear-gradient(90deg,rgba(204,255,0,.05),rgba(204,255,0,.5),rgba(204,255,0,.05));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;background-size:200% 100%;animation:shimmer 3s linear infinite;pointer-events:none;}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+
+/* 섹션 번호 */
+.section-num{font-size:11px;color:rgba(204,255,0,.45);font-weight:700;letter-spacing:4px;margin-bottom:6px;}
+
+/* ripple */
+.ripple-circle{position:absolute;border-radius:50%;background:rgba(0,0,0,.2);transform:scale(0);animation:rippleAnim .6s linear;pointer-events:none;}
+@keyframes rippleAnim{to{transform:scale(4);opacity:0;}}
+.lime-btn{position:relative;overflow:hidden;}
+
 #scroll-bar{position:fixed;top:0;left:0;height:3px;background:#CCFF00;width:0%;z-index:99999;transition:width .1s;}
 
 /* 5번 파티클 */
@@ -254,14 +265,6 @@ function App(){
               <span style={{color:"#CCFF00",fontWeight:700}}>의상 사진만 있으면</span>
               <span style={{color:"rgba(240,236,228,.65)"}}> 모델샷과 모델영상을 만들어 드립니다.</span>
             </p>
-            <div style={{display:"flex",gap:40,marginTop:32}}>
-              {[{id:"cnt1",end:500,suffix:"건+",label:"제작 완료"},{id:"cnt2",end:98,suffix:"%",label:"고객 만족도"},{id:"cnt3",end:87,suffix:"%",label:"재구매율"}].map((c,i)=>(
-                <div key={i} style={{textAlign:"left"}}>
-                  <div id={c.id} style={{fontSize:"clamp(24px,2.5vw,36px)",fontWeight:900,color:"#CCFF00"}}>0</div>
-                  <div style={{fontSize:12,color:"rgba(240,236,228,.4)",letterSpacing:"2px",marginTop:4}}>{c.label}</div>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </div>
@@ -270,6 +273,7 @@ function App(){
       <div className="inner">
         <div className="section-header">
           <div className="section-left">
+            <div className="section-num">01</div>
             <div className="section-main-title">AI 모델 사진</div>
             <div className="section-sub-title">PHOTO PORTFOLIO</div>
           </div>
@@ -294,6 +298,7 @@ function App(){
       <div className="inner">
         <div className="section-header">
           <div className="section-left">
+            <div className="section-num">02</div>
             <div className="section-main-title">AI 모델 영상</div>
             <div className="section-sub-title">VIDEO PORTFOLIO</div>
           </div>
@@ -397,13 +402,19 @@ function type(){
 }
 setTimeout(type,600);
 
-// 2번 카운터
-[{id:"cnt1",end:500,suffix:"건+"},{id:"cnt2",end:98,suffix:"%"},{id:"cnt3",end:87,suffix:"%"}].forEach((c,i)=>{
-  setTimeout(()=>{
-    const el=document.getElementById(c.id);if(!el)return;
-    let cur=0;const step=()=>{cur+=Math.ceil(c.end/50);if(cur>=c.end){el.textContent=c.end+c.suffix;return;}el.textContent=cur+c.suffix;requestAnimationFrame(step);};
-    step();
-  },800+i*200);
+// 2번 ripple 효과
+document.addEventListener("click",function(e){
+  const btn=e.target.closest(".lime-btn");
+  if(!btn)return;
+  const r=document.createElement("span");
+  r.className="ripple-circle";
+  const rect=btn.getBoundingClientRect();
+  const size=Math.max(rect.width,rect.height);
+  r.style.width=r.style.height=size+"px";
+  r.style.left=(e.clientX-rect.left-size/2)+"px";
+  r.style.top=(e.clientY-rect.top-size/2)+"px";
+  btn.appendChild(r);
+  setTimeout(()=>r.remove(),600);
 });
 
 // 5번 파티클
