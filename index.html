@@ -47,6 +47,10 @@ html,body{
   grid-template-columns:repeat(4,1fr);
   gap:10px;
 }
+/* 1번 - LD 로고 라임 글로우 */
+.logo-glow circle:first-child{filter:drop-shadow(0 0 8px rgba(204,255,0,.5));}
+
+/* 2번 - 카드 hover 올라오는 효과 */
 .photo-card{
   position:relative;
   padding-top:177.78%;
@@ -55,13 +59,23 @@ html,body{
   overflow:hidden;
   border:1px solid rgba(240,236,228,.1);
   cursor:pointer;
-  transition:border-color .3s;
+  transition:border-color .3s, transform .3s;
 }
-.photo-card:hover{border-color:rgba(204,255,0,.4);}
+.photo-card:hover{border-color:rgba(204,255,0,.4);transform:translateY(-6px);}
 .photo-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
-.card-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;}
-.video-card{position:relative;padding-top:177.78%;background:#111;border-radius:14px;overflow:hidden;border:1px solid rgba(240,236,228,.1);}
+.video-card{position:relative;padding-top:177.78%;background:#111;border-radius:14px;overflow:hidden;border:1px solid rgba(240,236,228,.1);transition:border-color .3s,transform .3s;}
+.video-card:hover{border-color:rgba(204,255,0,.4);transform:translateY(-6px);}
 .video-card video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+
+/* 3번 - 섹션 타이틀 라임 라인 장식 */
+.section-main-title{font-size:clamp(36px,4vw,58px);font-weight:900;line-height:1.15;display:flex;align-items:center;gap:14px;}
+.section-main-title::before{content:"";display:block;width:5px;height:clamp(36px,4vw,58px);background:#CCFF00;border-radius:3px;flex-shrink:0;}
+
+/* 5번 - fade-in 애니메이션 */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;animation:fadeUp .7s ease forwards;}
+.fade-in.visible{opacity:1;}
+
 .lime-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#CCFF00;color:#0a0a0a;border:none;border-radius:50px;padding:16px 48px;font-size:16px;font-weight:900;cursor:pointer;font-family:inherit;text-decoration:none;transition:opacity .2s;}
 .lime-btn:hover{opacity:.85;}
 .btn-row{position:relative;width:100%;height:56px;margin-top:12px;}
@@ -135,6 +149,7 @@ function saveToSheet(key,value){
 function LDLogo({size=160}){
   return(
     <svg width={size} height={size} viewBox="0 0 100 100" fill="none" style={{flexShrink:0}}>
+      <circle cx="50" cy="50" r="46" stroke="rgba(204,255,0,.25)" strokeWidth="8" fill="none"/>
       <circle cx="50" cy="50" r="46" stroke="#f0ece4" strokeWidth="4" fill="none"/>
       <text x="50" y="66" textAnchor="middle" fontFamily="Georgia,serif" fontWeight="900" fontSize="52" fill="#f0ece4">LD</text>
     </svg>
@@ -299,7 +314,7 @@ function App(){
       </div>
 
       {/* 문의 */}
-      <div style={{background:"rgba(204,255,0,.04)",borderTop:"1px solid rgba(204,255,0,.12)",borderBottom:"1px solid rgba(204,255,0,.12)",padding:"72px 50px",textAlign:"center"}}>
+      <div style={{background:"rgba(204,255,0,.06)",borderTop:"1px solid rgba(204,255,0,.2)",borderBottom:"1px solid rgba(204,255,0,.2)",padding:"80px 50px",textAlign:"center"}}>
         <div style={{fontSize:13,letterSpacing:".5em",color:"rgba(204,255,0,.7)",fontWeight:700,textTransform:"uppercase",marginBottom:16}}>CONTACT</div>
         <h2 style={{fontSize:"clamp(32px,3.5vw,56px)",fontWeight:900,marginBottom:16,lineHeight:1.2,color:"#f0ece4"}}>지금 바로 문의하세요</h2>
         <p style={{fontSize:"clamp(15px,1.8vw,20px)",color:"rgba(240,236,228,.5)",marginBottom:40,lineHeight:1.9}}>의상 사진을 보내주시면 빠르게 견적을 안내해 드립니다</p>
@@ -319,6 +334,16 @@ function App(){
   );
 }
 ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.style.opacity="1";e.target.style.transform="translateY(0)";}});
+},{threshold:0.15});
+document.querySelectorAll(".inner,.service-wrap,.section-header").forEach((el,i)=>{
+  el.style.opacity="0";
+  el.style.transform="translateY(28px)";
+  el.style.transition=`opacity .7s ease ${i*0.1}s, transform .7s ease ${i*0.1}s`;
+  observer.observe(el);
+});
 </script>
 </body>
 </html>
