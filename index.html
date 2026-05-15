@@ -47,6 +47,12 @@ html,body{
   grid-template-columns:repeat(4,1fr);
   gap:10px;
 }
+/* 3번 스크롤 진행 바 */
+#scroll-bar{position:fixed;top:0;left:0;height:3px;background:#CCFF00;width:0%;z-index:99999;transition:width .1s;}
+
+/* 5번 파티클 */
+.particle{position:fixed;width:3px;height:3px;background:#CCFF00;border-radius:50%;pointer-events:none;z-index:9990;}
+
 /* 커서 효과 */
 body{cursor:none;}
 #cursor-dot{width:8px;height:8px;background:#CCFF00;border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform .1s;}
@@ -242,12 +248,20 @@ function App(){
               AI FASHION MODEL
             </div>
             <h1 style={{fontSize:"clamp(40px,5vw,76px)",fontWeight:900,lineHeight:1.1,marginBottom:24,color:"#f0ece4"}}>
-              인플루언서 패션<br/>AI 모델 제작
+              <span id="typing-text"></span>
             </h1>
             <p style={{fontSize:"clamp(16px,1.8vw,22px)",lineHeight:1.9}}>
               <span style={{color:"#CCFF00",fontWeight:700}}>의상 사진만 있으면</span>
               <span style={{color:"rgba(240,236,228,.65)"}}> 모델샷과 모델영상을 만들어 드립니다.</span>
             </p>
+            <div style={{display:"flex",gap:40,marginTop:32}}>
+              {[{id:"cnt1",end:500,suffix:"건+",label:"제작 완료"},{id:"cnt2",end:98,suffix:"%",label:"고객 만족도"},{id:"cnt3",end:87,suffix:"%",label:"재구매율"}].map((c,i)=>(
+                <div key={i} style={{textAlign:"left"}}>
+                  <div id={c.id} style={{fontSize:"clamp(24px,2.5vw,36px)",fontWeight:900,color:"#CCFF00"}}>0</div>
+                  <div style={{fontSize:12,color:"rgba(240,236,228,.4)",letterSpacing:"2px",marginTop:4}}>{c.label}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -364,6 +378,58 @@ document.addEventListener("mousemove",e=>{
   dot.style.left=e.clientX+"px";dot.style.top=e.clientY+"px";
   ring.style.left=e.clientX+"px";ring.style.top=e.clientY+"px";
 });
+
+// 3번 스크롤 진행 바
+const sb=document.createElement("div");sb.id="scroll-bar";document.body.appendChild(sb);
+window.addEventListener("scroll",()=>{
+  const pct=(window.scrollY/(document.body.scrollHeight-window.innerHeight))*100;
+  sb.style.width=pct+"%";
+});
+
+// 1번 타이핑 효과
+const lines=["인플루언서 패션","AI 모델 제작"];
+let li=0,ci=0,txt="";
+const el=document.getElementById("typing-text");
+function type(){
+  if(!el)return;
+  if(ci<lines[li].length){txt+=lines[li][ci++];el.innerHTML=txt.replace("\n","<br/>");setTimeout(type,80);}
+  else if(li<lines.length-1){li++;txt+="<br/>";ci=0;setTimeout(type,400);}
+}
+setTimeout(type,600);
+
+// 2번 카운터
+[{id:"cnt1",end:500,suffix:"건+"},{id:"cnt2",end:98,suffix:"%"},{id:"cnt3",end:87,suffix:"%"}].forEach((c,i)=>{
+  setTimeout(()=>{
+    const el=document.getElementById(c.id);if(!el)return;
+    let cur=0;const step=()=>{cur+=Math.ceil(c.end/50);if(cur>=c.end){el.textContent=c.end+c.suffix;return;}el.textContent=cur+c.suffix;requestAnimationFrame(step);};
+    step();
+  },800+i*200);
+});
+
+// 5번 파티클
+for(let i=0;i<20;i++){
+  const p=document.createElement("div");
+  p.className="particle";
+  const x=Math.random()*window.innerWidth;
+  const dur=4+Math.random()*6;
+  const delay=Math.random()*6;
+  p.style.cssText=`left:${x}px;top:${window.innerHeight}px;opacity:0;transition:none;`;
+  document.body.appendChild(p);
+  function animParticle(el,startX){
+    const drift=(Math.random()-.5)*100;
+    el.style.transition=`transform ${dur}s linear, opacity ${dur}s ease`;
+    el.style.transform=`translate(${drift}px,-${window.innerHeight+20}px)`;
+    el.style.opacity=(Math.random()*.4+.1).toString();
+    setTimeout(()=>{
+      el.style.transition="none";
+      el.style.transform="translate(0,0)";
+      el.style.opacity="0";
+      el.style.left=Math.random()*window.innerWidth+"px";
+      setTimeout(()=>animParticle(el),100);
+    },dur*1000);
+  }
+  setTimeout(()=>animParticle(p,x),delay*1000);
+}
 
 const observer=new IntersectionObserver((entries)=>{
   entries.forEach(e=>{if(e.isIntersecting){e.target.style.opacity="1";e.target.style.transform="translateY(0)";}});
