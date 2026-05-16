@@ -602,6 +602,7 @@ function App(){
         <div className="grid4" style={{marginBottom:20}}>
           {videos.map((url,i)=><VideoCard key={i} idx={i} url={url} onSave={(idx,newUrl)=>setVideos(p=>p.map((u,j)=>j===idx?newUrl:u))}/>)}
         </div>
+        <div className="btn-row">
           <a href={links.kakao} target="_blank" rel="noopener noreferrer" className="brand-btn kakao-btn">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="#3C1E1E"><path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.7 1.7 5.1 4.3 6.5l-1.1 4 4.5-2.9c.7.1 1.5.2 2.3.2 5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/></svg>
             카카오톡 상담
