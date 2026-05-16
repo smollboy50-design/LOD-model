@@ -162,7 +162,15 @@ html,body{
   .section-main-title{font-size:clamp(26px,7vw,36px);}
 }
 
-/* 탭 패널 - PC: 2열 그리드 */
+/* 브랜드 버튼 */
+.brand-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:none;border-radius:50px;padding:16px 48px;font-size:17px;font-weight:900;cursor:pointer;font-family:inherit;text-decoration:none;transition:transform .2s,opacity .2s;position:relative;overflow:hidden;flex:1;}
+.brand-btn:hover{transform:scale(1.04);opacity:.9;}
+.kakao-btn{background:#FEE500;color:#3C1E1E;}
+.tiktok-btn{background:#000;color:#fff;}
+.youtube-btn{background:#FF0000;color:#fff;}
+@media(max-width:768px){
+  .brand-btn{padding:14px 20px;font-size:15px;}
+}
 .tab-panel{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;position:relative;}
 .tab-item{border:1px solid rgba(240,236,228,.08);border-radius:16px;overflow:hidden;position:relative;background:rgba(240,236,228,.02);}
 .tab-item::before{content:"";position:absolute;inset:0;border-radius:16px;padding:1px;background:linear-gradient(90deg,rgba(204,255,0,.05),rgba(204,255,0,.4),rgba(204,255,0,.05));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;background-size:200% 100%;animation:shimmer 3s linear infinite;pointer-events:none;z-index:1;}
@@ -506,7 +514,7 @@ function App(){
       {/* 히어로 */}
       <div className="inner hero-bg" style={{paddingTop:60,paddingBottom:72}}>
         <div style={{textAlign:"center",marginBottom:32}}>
-          <div style={{fontSize:"clamp(12px,1.2vw,15px)",letterSpacing:".5em",color:"rgba(204,255,0,.8)",fontWeight:700,textTransform:"uppercase"}}>
+          <div style={{fontSize:"clamp(16px,1.8vw,22px)",letterSpacing:".5em",color:"rgba(204,255,0,.8)",fontWeight:700,textTransform:"uppercase"}}>
             AI FASHION MODEL
           </div>
         </div>
@@ -517,8 +525,8 @@ function App(){
               <EditableText value={texts.hero_title} onSave={saveText("hero_title")} tag="span"
                 style={{whiteSpace:"pre-line"}}/>
             </h1>
-            <p style={{fontSize:"clamp(16px,1.8vw,22px)",lineHeight:1.9}}>
-              <span style={{color:"#CCFF00",fontWeight:700}}>의상 사진만 있으면</span>
+            <p style={{fontSize:"clamp(18px,2vw,26px)",lineHeight:1.9}}>
+              <span style={{color:"#CCFF00",fontWeight:900,fontSize:"clamp(20px,2.2vw,28px)"}}>의상 사진만 있으면</span>
               <span style={{color:"rgba(240,236,228,.65)"}}> <EditableText value={texts.hero_sub} onSave={saveText("hero_sub")} tag="span"/></span>
             </p>
           </div>
@@ -541,10 +549,13 @@ function App(){
           {photos.map((url,i)=><PhotoCard key={i} idx={i} url={url} onSave={(idx,newUrl)=>setPhotos(p=>p.map((u,j)=>j===idx?newUrl:u))}/>)}
         </div>
         <div className="btn-row">
-          <a href={links.kakao} target="_blank" rel="noopener noreferrer" className="lime-btn">💬 카카오톡 상담</a>
-          <a href={links.tiktok} target="_blank" rel="noopener noreferrer" className="lime-btn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="#0a0a0a"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg>
-            틱톡에서 확인하기
+          <a href={links.kakao} target="_blank" rel="noopener noreferrer" className="brand-btn kakao-btn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#3C1E1E"><path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.7 1.7 5.1 4.3 6.5l-1.1 4 4.5-2.9c.7.1 1.5.2 2.3.2 5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/></svg>
+            상담
+          </a>
+          <a href={links.tiktok} target="_blank" rel="noopener noreferrer" className="brand-btn tiktok-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg>
+            확인하기
           </a>
         </div>
         {IS_ADMIN&&<div style={{marginTop:12,padding:"12px 16px",background:"rgba(204,255,0,.06)",borderRadius:10,border:"1px dashed rgba(204,255,0,.3)"}}>
@@ -576,10 +587,13 @@ function App(){
           {videos.map((url,i)=><VideoCard key={i} idx={i} url={url} onSave={(idx,newUrl)=>setVideos(p=>p.map((u,j)=>j===idx?newUrl:u))}/>)}
         </div>
         <div className="btn-row">
-          <a href={links.kakao} target="_blank" rel="noopener noreferrer" className="lime-btn">💬 카카오톡 상담</a>
-          <a href={links.youtube} target="_blank" rel="noopener noreferrer" className="lime-btn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="#0a0a0a"><path d="M23 7s-.3-2-1.2-2.7c-1.1-1.2-2.4-1.2-3-1.3C16.6 3 12 3 12 3s-4.6 0-6.8.1c-.6.1-1.9.1-3 1.3C1.3 5 1 7 1 7S.7 9.1.7 11.2v2c0 2.1.3 4.2.3 4.2s.3 2 1.2 2.7c1.1 1.2 2.6 1.1 3.3 1.2C7.2 21.4 12 21.4 12 21.4s4.6 0 6.8-.2c.6-.1 1.9-.1 3-1.3.9-.7 1.2-2.7 1.2-2.7s.3-2.1.3-4.2v-2C23.3 9.1 23 7 23 7zM9.7 15.5V8.4l8.1 3.6-8.1 3.5z"/></svg>
-            유튜브에서 확인하기
+          <a href={links.kakao} target="_blank" rel="noopener noreferrer" className="brand-btn kakao-btn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#3C1E1E"><path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.7 1.7 5.1 4.3 6.5l-1.1 4 4.5-2.9c.7.1 1.5.2 2.3.2 5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/></svg>
+            상담
+          </a>
+          <a href={links.youtube} target="_blank" rel="noopener noreferrer" className="brand-btn youtube-btn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M23 7s-.3-2-1.2-2.7c-1.1-1.2-2.4-1.2-3-1.3C16.6 3 12 3 12 3s-4.6 0-6.8.1c-.6.1-1.9.1-3 1.3C1.3 5 1 7 1 7S.7 9.1.7 11.2v2c0 2.1.3 4.2.3 4.2s.3 2 1.2 2.7c1.1 1.2 2.6 1.1 3.3 1.2C7.2 21.4 12 21.4 12 21.4s4.6 0 6.8-.2c.6-.1 1.9-.1 3-1.3.9-.7 1.2-2.7 1.2-2.7s.3-2.1.3-4.2v-2C23.3 9.1 23 7 23 7zM9.7 15.5V8.4l8.1 3.6-8.1 3.5z"/></svg>
+            확인하기
           </a>
         </div>
         {IS_ADMIN&&<div style={{marginTop:12,padding:"12px 16px",background:"rgba(204,255,0,.06)",borderRadius:10,border:"1px dashed rgba(204,255,0,.3)"}}>
