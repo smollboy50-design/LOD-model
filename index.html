@@ -46,9 +46,9 @@ html,body{
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:10px;
-  max-width:1130px;
+  max-width:600px;
   margin:0 auto;
-  padding:0 20px;
+  padding:16px 20px 0;
 }
 /* radial glow 히어로 배경 */
 .hero-bg{position:relative;}
@@ -559,10 +559,11 @@ function App(){
             {["예쁜 모델 사진이 필요한데 촬영이 부담스러운 분","저작권 걱정 없는 자연스러운 모델을 원하시는 분","기존 AI 모델보다 실제 인플루언서 같은 이미지를 원하시는 분","신상마켓·쇼핑몰 상품 사진이 필요하신 분"].map((t,i)=><div key={i} className="section-desc-item">{t}</div>)}
           </div>
         </div>
-        <div className="grid4" style={{marginBottom:20}}>
-          {photos.map((url,i)=><PhotoCard key={i} idx={i} url={url} onSave={(idx,newUrl)=>setPhotos(p=>p.map((u,j)=>j===idx?newUrl:u))}/>)}
-        </div>
-        <div className="btn-row">
+      </div>
+      <div className="grid4" style={{marginBottom:20}}>
+        {photos.map((url,i)=><PhotoCard key={i} idx={i} url={url} onSave={(idx,newUrl)=>setPhotos(p=>p.map((u,j)=>j===idx?newUrl:u))}/>)}
+      </div>
+      <div className="inner">
           <a href={links.kakao} target="_blank" rel="noopener noreferrer" className="brand-btn kakao-btn">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="#3C1E1E"><path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.7 1.7 5.1 4.3 6.5l-1.1 4 4.5-2.9c.7.1 1.5.2 2.3.2 5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/></svg>
             카카오톡 상담
@@ -597,10 +598,11 @@ function App(){
             {["영업소·매장 홍보 영상 제작비가 부담되시는 분","SNS 광고 영상이 필요한데 촬영 일정 잡기 어려우신 분","틱톡·인스타 릴스용 짧은 패션 영상이 필요하신 분"].map((t,i)=><div key={i} className="section-desc-item">{t}</div>)}
           </div>
         </div>
-        <div className="grid4" style={{marginBottom:20}}>
-          {videos.map((url,i)=><VideoCard key={i} idx={i} url={url} onSave={(idx,newUrl)=>setVideos(p=>p.map((u,j)=>j===idx?newUrl:u))}/>)}
-        </div>
-        <div className="btn-row">
+      </div>
+      <div className="grid4" style={{marginBottom:20}}>
+        {videos.map((url,i)=><VideoCard key={i} idx={i} url={url} onSave={(idx,newUrl)=>setVideos(p=>p.map((u,j)=>j===idx?newUrl:u))}/>)}
+      </div>
+      <div className="inner">
           <a href={links.kakao} target="_blank" rel="noopener noreferrer" className="brand-btn kakao-btn">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="#3C1E1E"><path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.7 1.7 5.1 4.3 6.5l-1.1 4 4.5-2.9c.7.1 1.5.2 2.3.2 5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/></svg>
             카카오톡 상담
