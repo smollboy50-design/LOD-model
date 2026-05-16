@@ -320,10 +320,13 @@ function VideoCard({idx,url,onSave}){
   );
 }
 
-function EditableText({value,onSave,tag:"Tag"="span",style={},className=""}){
+function EditableText({value,onSave,tag,style,className}){
+  const Tag=tag||"span";
+  const st=style||{};
+  const cn=className||"";
   const [editing,setEditing]=useState(false);
   const [val,setVal]=useState(value);
-  if(!IS_ADMIN)return <Tag style={style} className={className}>{value}</Tag>;
+  if(!IS_ADMIN)return <Tag style={st} className={cn}>{value}</Tag>;
   if(editing)return(
     <span style={{position:"relative",display:"inline-block"}}>
       <textarea value={val} onChange={e=>setVal(e.target.value)}
@@ -336,7 +339,7 @@ function EditableText({value,onSave,tag:"Tag"="span",style={},className=""}){
     </span>
   );
   return(
-    <Tag style={{...style,outline:"1px dashed rgba(204,255,0,.4)",cursor:"pointer",borderRadius:4}} className={className}
+    <Tag style={{...st,outline:"1px dashed rgba(204,255,0,.4)",cursor:"pointer",borderRadius:4}} className={cn}
       onClick={()=>setEditing(true)} title="클릭하여 수정">
       {value}
     </Tag>
