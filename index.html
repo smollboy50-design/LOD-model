@@ -135,9 +135,9 @@ html,body{
   .grid4{grid-template-columns:repeat(2,1fr);gap:8px;}
 
   /* 3번 - 버튼 크기 키우기 */
-  .btn-row{height:auto;display:flex;flex-direction:row;gap:10px;justify-content:center;flex-wrap:nowrap;margin-top:16px;}
+  .btn-row{height:auto;display:flex;flex-direction:row;gap:8px;justify-content:center;flex-wrap:nowrap;margin-top:16px;padding:0 16px;}
   .btn-row a:first-child,.btn-row a:last-child{position:static;transform:none;flex:1;}
-  .brand-btn{padding:16px 12px !important;font-size:16px !important;white-space:nowrap;}
+  .brand-btn{padding:14px 12px !important;font-size:14px !important;white-space:nowrap;min-width:unset !important;max-width:unset !important;}
 
   /* 서비스 */
   .service-wrap{padding:24px 16px;}
@@ -175,13 +175,13 @@ html,body{
 }
 
 /* 브랜드 버튼 */
-.brand-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:none;border-radius:50px;padding:16px 48px;font-size:17px;font-weight:900;cursor:pointer;font-family:inherit;text-decoration:none;transition:transform .2s,opacity .2s;position:relative;overflow:hidden;flex:1;}
+.brand-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:none;border-radius:50px;padding:16px 32px;font-size:16px;font-weight:900;cursor:pointer;font-family:inherit;text-decoration:none;transition:transform .2s,opacity .2s;position:relative;overflow:hidden;flex:1;white-space:nowrap;min-width:180px;max-width:220px;}
 .brand-btn:hover{transform:scale(1.04);opacity:.9;}
 .kakao-btn{background:#FEE500;color:#3C1E1E;}
 .tiktok-btn{background:#000;color:#fff;}
 .youtube-btn{background:#FF0000;color:#fff;}
 @media(max-width:768px){
-  .brand-btn{padding:14px 20px;font-size:15px;}
+  .brand-btn{padding:14px 16px;font-size:15px;min-width:unset;max-width:unset;}
 }
 .tab-panel{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;position:relative;}
 .tab-item{border:1px solid rgba(240,236,228,.08);border-radius:16px;overflow:hidden;position:relative;background:rgba(240,236,228,.02);}
@@ -557,7 +557,7 @@ function App(){
             {["예쁜 모델 사진이 필요한데 촬영이 부담스러운 분","저작권 걱정 없는 자연스러운 모델을 원하시는 분","기존 AI 모델보다 실제 인플루언서 같은 이미지를 원하시는 분","신상마켓·쇼핑몰 상품 사진이 필요하신 분"].map((t,i)=><div key={i} className="section-desc-item">{t}</div>)}
           </div>
         </div>
-        <div style={{padding:"16px 20px 0",display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:10,marginBottom:20}}>
+        <div className="grid4" style={{marginBottom:20}}>
           {photos.map((url,i)=><PhotoCard key={i} idx={i} url={url} onSave={(idx,newUrl)=>setPhotos(p=>p.map((u,j)=>j===idx?newUrl:u))}/>)}
         </div>
         <div className="btn-row">
@@ -596,7 +596,7 @@ function App(){
             {["영업소·매장 홍보 영상 제작비가 부담되시는 분","SNS 광고 영상이 필요한데 촬영 일정 잡기 어려우신 분","틱톡·인스타 릴스용 짧은 패션 영상이 필요하신 분"].map((t,i)=><div key={i} className="section-desc-item">{t}</div>)}
           </div>
         </div>
-        <div style={{padding:"16px 20px 0",display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:10,marginBottom:20}}>
+        <div className="grid4" style={{marginBottom:20}}>
           {videos.map((url,i)=><VideoCard key={i} idx={i} url={url} onSave={(idx,newUrl)=>setVideos(p=>p.map((u,j)=>j===idx?newUrl:u))}/>)}
         </div>
         <div className="btn-row">
