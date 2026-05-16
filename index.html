@@ -162,20 +162,43 @@ html,body{
   .section-main-title{font-size:clamp(26px,7vw,36px);}
 }
 
-/* 탭 패널 */
-.tab-panel{border:1px solid rgba(240,236,228,.08);border-radius:16px;overflow:hidden;position:relative;}
-.tab-panel::before{content:"";position:absolute;inset:0;border-radius:16px;padding:1px;background:linear-gradient(90deg,rgba(204,255,0,.05),rgba(204,255,0,.5),rgba(204,255,0,.05));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;background-size:200% 100%;animation:shimmer 3s linear infinite;pointer-events:none;z-index:1;}
+/* 탭 패널 - PC: 2열 그리드 */
+.tab-panel{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;position:relative;}
+.tab-item{border:1px solid rgba(240,236,228,.08);border-radius:16px;overflow:hidden;position:relative;background:rgba(240,236,228,.02);}
+.tab-item::before{content:"";position:absolute;inset:0;border-radius:16px;padding:1px;background:linear-gradient(90deg,rgba(204,255,0,.05),rgba(204,255,0,.4),rgba(204,255,0,.05));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;background-size:200% 100%;animation:shimmer 3s linear infinite;pointer-events:none;z-index:1;}
+.tab-btn{width:100%;padding:22px 24px;text-align:left;background:transparent;border:none;cursor:pointer;fontFamily:inherit;display:flex;align-items:center;justify-content:space-between;gap:12px;transition:background .2s;}
+.tab-btn:hover{background:rgba(204,255,0,.04);}
+.tab-btn-open{background:rgba(204,255,0,.06);}
+.tab-title{font-size:20px;font-weight:900;color:#f0ece4;line-height:1.3;word-break:keep-all;}
+.tab-arrow{font-size:12px;color:rgba(204,255,0,.7);flex-shrink:0;}
+.tab-content-inner{padding:0 24px 24px;font-size:15px;}
+
+/* 준비사항 가로 배치 */
+.prep-grid{display:flex;gap:24px;flex-wrap:wrap;justify-content:center;}
+.prep-item{display:flex;align-items:center;gap:8px;font-size:16px;color:rgba(240,236,228,.7);}
+.prep-item::before{content:"—";color:rgba(204,255,0,.6);flex-shrink:0;}
+
+/* 폰 버전 */
 @media(max-width:768px){
-  .tab-panel>div{flex-direction:column !important;}
-  .tab-panel>div>button{width:100% !important;min-width:unset !important;border-right:none !important;border-bottom:1px solid rgba(240,236,228,.08) !important;padding:16px 20px !important;font-size:15px !important;}
-  .tab-panel>div>div{max-height:none !important;padding:16px 20px !important;}
+  .tab-panel{grid-template-columns:1fr;}
+  .tab-title{font-size:18px;}
+  .tab-content-inner{padding:0 16px 20px;font-size:14px;}
+  .tab-btn{padding:18px 16px;}
+  .prep-grid{flex-direction:column;gap:12px;align-items:flex-start;}
+  .prep-item{font-size:15px;}
+
+  /* 버튼 크기 키우기 */
+  .lime-btn{font-size:15px !important;padding:16px 20px !important;}
+  .btn-row{gap:10px !important;}
+
+  /* 글자 크기 더 크게 */
+  .section-main-title{font-size:clamp(32px,8vw,44px) !important;}
+  .section-sub-title{font-size:clamp(14px,3.5vw,18px) !important;}
+  .section-desc-item{font-size:clamp(15px,4vw,18px) !important;line-height:2 !important;}
+  .service-intro{font-size:clamp(15px,4vw,17px) !important;}
+  .notice-item{font-size:clamp(14px,3.5vw,16px) !important;}
 }
 
-/* 전체 글자 크기 키우기 */
-.section-desc-item{font-size:clamp(16px,1.8vw,20px) !important;}
-.section-sub-title{font-size:clamp(15px,1.6vw,20px) !important;letter-spacing:.1em;}
-.service-intro{font-size:clamp(16px,1.6vw,18px) !important;}
-.notice-item{font-size:clamp(15px,1.3vw,16px) !important;}
 
 .divider{display:flex;align-items:center;gap:16px;margin:72px 0;}
 .divider::before,.divider::after{content:"";flex:1;height:1px;background:rgba(240,236,228,.08);}
@@ -343,12 +366,13 @@ function LDLogo({size=160}){
 function TabItem({title,content}){
   const [open,setOpen]=useState(false);
   return(
-    <div style={{display:"flex",borderBottom:"1px solid rgba(240,236,228,.08)",minHeight:60}}>
-      <button onClick={()=>setOpen(!open)} style={{width:180,minWidth:180,padding:"20px 24px",textAlign:"left",background:open?"rgba(204,255,0,.06)":"transparent",border:"none",borderRight:"1px solid rgba(240,236,228,.08)",cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:16,color:open?"#CCFF00":"rgba(240,236,228,.8)",transition:"all .2s",flexShrink:0,wordBreak:"keep-all",lineHeight:1.4}}>
-        {title}
+    <div className="tab-item">
+      <button className={`tab-btn${open?" tab-btn-open":""}`} onClick={()=>setOpen(!open)}>
+        <span className="tab-title">{title}</span>
+        <span className="tab-arrow" style={{transform:open?"rotate(90deg)":"rotate(0deg)",transition:"transform .3s"}}>▶</span>
       </button>
-      <div style={{flex:1,padding:open?"20px 24px":"0 24px",overflow:"hidden",maxHeight:open?"600px":"0",transition:"max-height .4s ease, padding .3s"}}>
-        {content}
+      <div className="tab-content" style={{maxHeight:open?"800px":"0",overflow:"hidden",transition:"max-height .4s ease"}}>
+        <div className="tab-content-inner">{content}</div>
       </div>
     </div>
   );
@@ -578,9 +602,11 @@ function App(){
             의상 사진만 보내주시면 자연스러운 인플루언서 스타일의 모델샷과 모델영상을 제작해드립니다.<br/>
             화보 스타일이 아닌 실제 SNS에서 볼 수 있는 익숙하고 자연스러운 사진을 만들어드립니다.
           </p>
-          <div style={{maxWidth:500,margin:"0 auto"}}>
-            <div className="service-block-title" style={{fontSize:18,marginBottom:16}}><span className="service-icon-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#CCFF00" strokeWidth="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></span>준비사항</div>
-            {["의상 또는 제품 사진 (실제 촬영본)","성별 / 연령대","원하시는 분위기 또는 참고 사진·영상"].map((t,i)=><div key={i} className="service-block-item" style={{fontSize:16,marginBottom:8}}>{t}</div>)}
+          <div style={{maxWidth:700,margin:"0 auto"}}>
+            <div className="service-block-title" style={{fontSize:18,marginBottom:20,textAlign:"center"}}><span className="service-icon-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#CCFF00" strokeWidth="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></span>준비사항</div>
+            <div className="prep-grid">
+              {["의상 또는 제품 사진 (실제 촬영본)","성별 / 연령대","원하시는 분위기 또는 참고 사진·영상"].map((t,i)=><div key={i} className="prep-item">{t}</div>)}
+            </div>
           </div>
           <div className="service-notice" style={{marginTop:32}}>
             {["제작된 이미지·영상 상업적 사용 가능","독점 라이선스 / 영구 사용 가능","실사체·실존 인물 대상 의뢰는 거부될 수 있습니다","이미지 전송 후 단순 변심에 의한 환불·교환 불가"].map((t,i)=><div key={i} className="notice-item" style={{fontSize:15}}>{t}</div>)}
