@@ -190,11 +190,39 @@ body{cursor:none;}
 const {useState,useEffect,useRef}=React;
 const CLOUDINARY_CLOUD="ddjdyn0yj";
 const CLOUDINARY_PRESET="lod_unsigned";
-const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbwtVcrYr-6Gth2v2OxM5XRYuIRDzHoycjXLfoMZ23AyRmcwtuFYK5YUvPzdXXUifa4G/exec";
+const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbx_SvdtsSxoav9EPFu9UlBMkfjbMeYubKJbd1oDs780TUs3Vx4MnrmqSKYgvSOg7d50Ug/exec";
 const IS_ADMIN=new URLSearchParams(location.search).get("admin")==="true";
-const KAKAO_LINK="https://open.kakao.com/";
-const TIKTOK_LINK="https://www.tiktok.com/@glggid";
-const YOUTUBE_LINK="https://www.youtube.com/";
+let KAKAO_LINK="https://open.kakao.com/";
+let TIKTOK_LINK="https://www.tiktok.com/@glggid";
+let YOUTUBE_LINK="https://www.youtube.com/";
+let PHOTO_PRICE1="4,000원";
+let PHOTO_PRICE2="3,000원";
+let VIDEO_30S="50,000원";
+let VIDEO_60S="100,000원";
+
+function loadSheetData(){
+  return new Promise(resolve=>{
+    const name="load_"+Date.now();
+    const s=document.createElement("script");
+    const p=new URLSearchParams({callback:name,t:Date.now()});
+    s.src=APPS_SCRIPT_URL+"?"+p.toString();
+    window[name]=(data)=>{
+      delete window[name];
+      if(document.body.contains(s))document.body.removeChild(s);
+      if(data.kakao_link)KAKAO_LINK=data.kakao_link;
+      if(data.tiktok_link)TIKTOK_LINK=data.tiktok_link;
+      if(data.youtube_link)YOUTUBE_LINK=data.youtube_link;
+      if(data.photo_price1)PHOTO_PRICE1=Number(data.photo_price1).toLocaleString()+"원";
+      if(data.photo_price2)PHOTO_PRICE2=Number(data.photo_price2).toLocaleString()+"원";
+      if(data.video_30s)VIDEO_30S=Number(data.video_30s).toLocaleString()+"원";
+      if(data.video_60s)VIDEO_60S=Number(data.video_60s).toLocaleString()+"원";
+      resolve(data);
+    };
+    s.onerror=()=>{delete window[name];resolve({});};
+    setTimeout(()=>{if(window[name]){delete window[name];resolve({});}},5000);
+    document.body.appendChild(s);
+  });
+}
 
 function uploadFile(file,type,onProgress){
   const max=type==="video"?500*1024*1024:20*1024*1024;
@@ -295,6 +323,19 @@ function VideoCard({idx,url,onSave}){
 function App(){
   const [photos,setPhotos]=useState(Array(8).fill(""));
   const [videos,setVideos]=useState(Array(4).fill(""));
+  const [ready,setReady]=useState(false);
+  const [prices,setPrices]=useState({p1:"4,000원",p2:"3,000원",v30:"50,000원",v60:"100,000원"});
+  useEffect(()=>{
+    loadSheetData().then(data=>{
+      setPrices({
+        p1:data.photo_price1?Number(data.photo_price1).toLocaleString()+"원":"4,000원",
+        p2:data.photo_price2?Number(data.photo_price2).toLocaleString()+"원":"3,000원",
+        v30:data.video_30s?Number(data.video_30s).toLocaleString()+"원":"50,000원",
+        v60:data.video_60s?Number(data.video_60s).toLocaleString()+"원":"100,000원",
+      });
+      setReady(true);
+    });
+  },[]);
   return(
     <div className="shell">
 
@@ -411,10 +452,10 @@ function App(){
             <div className="accordion-body-inner">
               <table>
                 <tbody>
-                  <tr><td>📷 사진 1컷 (소매)</td><td style={{color:"#CCFF00",fontWeight:700}}>4,000원</td></tr>
-                  <tr><td>📷 사진 1컷 (도매·현금)</td><td style={{color:"#CCFF00",fontWeight:700}}>3,000원</td></tr>
-                  <tr><td>🎬 영상 30초</td><td style={{color:"#CCFF00",fontWeight:700}}>50,000원</td></tr>
-                  <tr><td>🎬 영상 1분</td><td style={{color:"#CCFF00",fontWeight:700}}>100,000원</td></tr>
+                  <tr><td>📷 사진 1컷 (소매)</td><td style={{color:"#CCFF00",fontWeight:700}}>{prices.p1}</td></tr>
+                  <tr><td>📷 사진 1컷 (도매·현금)</td><td style={{color:"#CCFF00",fontWeight:700}}>{prices.p2}</td></tr>
+                  <tr><td>🎬 영상 30초</td><td style={{color:"#CCFF00",fontWeight:700}}>{prices.v30}</td></tr>
+                  <tr><td>🎬 영상 1분</td><td style={{color:"#CCFF00",fontWeight:700}}>{prices.v60}</td></tr>
                 </tbody>
               </table>
             </div>
