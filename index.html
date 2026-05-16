@@ -551,11 +551,11 @@ function App(){
         <div className="btn-row">
           <a href={links.kakao} target="_blank" rel="noopener noreferrer" className="brand-btn kakao-btn">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="#3C1E1E"><path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.7 1.7 5.1 4.3 6.5l-1.1 4 4.5-2.9c.7.1 1.5.2 2.3.2 5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/></svg>
-            상담
+            카카오톡 상담
           </a>
           <a href={links.tiktok} target="_blank" rel="noopener noreferrer" className="brand-btn tiktok-btn">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg>
-            확인하기
+            틱톡 확인하기
           </a>
         </div>
         {IS_ADMIN&&<div style={{marginTop:12,padding:"12px 16px",background:"rgba(204,255,0,.06)",borderRadius:10,border:"1px dashed rgba(204,255,0,.3)"}}>
@@ -589,11 +589,11 @@ function App(){
         <div className="btn-row">
           <a href={links.kakao} target="_blank" rel="noopener noreferrer" className="brand-btn kakao-btn">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="#3C1E1E"><path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.7 1.7 5.1 4.3 6.5l-1.1 4 4.5-2.9c.7.1 1.5.2 2.3.2 5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/></svg>
-            상담
+            카카오톡 상담
           </a>
           <a href={links.youtube} target="_blank" rel="noopener noreferrer" className="brand-btn youtube-btn">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M23 7s-.3-2-1.2-2.7c-1.1-1.2-2.4-1.2-3-1.3C16.6 3 12 3 12 3s-4.6 0-6.8.1c-.6.1-1.9.1-3 1.3C1.3 5 1 7 1 7S.7 9.1.7 11.2v2c0 2.1.3 4.2.3 4.2s.3 2 1.2 2.7c1.1 1.2 2.6 1.1 3.3 1.2C7.2 21.4 12 21.4 12 21.4s4.6 0 6.8-.2c.6-.1 1.9-.1 3-1.3.9-.7 1.2-2.7 1.2-2.7s.3-2.1.3-4.2v-2C23.3 9.1 23 7 23 7zM9.7 15.5V8.4l8.1 3.6-8.1 3.5z"/></svg>
-            확인하기
+            유튜브 확인하기
           </a>
         </div>
         {IS_ADMIN&&<div style={{marginTop:12,padding:"12px 16px",background:"rgba(204,255,0,.06)",borderRadius:10,border:"1px dashed rgba(204,255,0,.3)"}}>
@@ -612,18 +612,50 @@ function App(){
       {/* 서비스 설명 */}
       <div className="inner" style={{paddingBottom:64}}>
         <div className="service-wrap">
-          <p className="service-intro">
-            의상 사진만 보내주시면 자연스러운 인플루언서 스타일의 모델샷과 모델영상을 제작해드립니다.<br/>
-            화보 스타일이 아닌 실제 SNS에서 볼 수 있는 익숙하고 자연스러운 사진을 만들어드립니다.
-          </p>
-          <div style={{maxWidth:700,margin:"0 auto"}}>
-            <div className="service-block-title" style={{fontSize:18,marginBottom:20,textAlign:"center"}}><span className="service-icon-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#CCFF00" strokeWidth="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></span>준비사항</div>
+          {/* 소개글 */}
+          <div style={{textAlign:"center",marginBottom:40}}>
+            <p style={{fontSize:"clamp(16px,1.6vw,19px)",color:"rgba(240,236,228,.75)",lineHeight:2,maxWidth:700,margin:"0 auto"}}>
+              의상 사진만 보내주시면 자연스러운 인플루언서 스타일의<br/>
+              모델샷과 모델영상을 제작해드립니다.
+            </p>
+            <p style={{fontSize:"clamp(14px,1.4vw,17px)",color:"rgba(240,236,228,.45)",lineHeight:2,maxWidth:600,margin:"12px auto 0"}}>
+              화보 스타일이 아닌 실제 SNS에서 볼 수 있는 익숙하고 자연스러운 사진
+            </p>
+          </div>
+
+          {/* 구분선 */}
+          <div style={{height:1,background:"rgba(240,236,228,.08)",margin:"0 0 36px"}}/>
+
+          {/* 준비사항 */}
+          <div style={{marginBottom:36}}>
+            <div style={{display:"flex",alignItems:"center",gap:10,justifyContent:"center",marginBottom:24}}>
+              <span className="service-icon-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#CCFF00" strokeWidth="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></span>
+              <span style={{fontSize:18,fontWeight:900,color:"#f0ece4",letterSpacing:"2px"}}>준비사항</span>
+            </div>
             <div className="prep-grid">
-              {["의상 또는 제품 사진 (실제 촬영본)","성별 / 연령대","원하시는 분위기 또는 참고 사진·영상"].map((t,i)=><div key={i} className="prep-item">{t}</div>)}
+              {["📸 의상 또는 제품 사진 (실제 촬영본)","👤 성별 / 연령대","🎨 원하시는 분위기 또는 참고 사진·영상"].map((t,i)=>(
+                <div key={i} style={{background:"rgba(204,255,0,.04)",border:"1px solid rgba(204,255,0,.15)",borderRadius:10,padding:"14px 20px",fontSize:"clamp(14px,1.4vw,16px)",color:"rgba(240,236,228,.8)",textAlign:"center",flex:1,minWidth:160}}>
+                  {t}
+                </div>
+              ))}
             </div>
           </div>
-          <div className="service-notice" style={{marginTop:32}}>
-            {["제작된 이미지·영상 상업적 사용 가능","독점 라이선스 / 영구 사용 가능","실사체·실존 인물 대상 의뢰는 거부될 수 있습니다","이미지 전송 후 단순 변심에 의한 환불·교환 불가"].map((t,i)=><div key={i} className="notice-item" style={{fontSize:15}}>{t}</div>)}
+
+          {/* 구분선 */}
+          <div style={{height:1,background:"rgba(240,236,228,.08)",margin:"0 0 28px"}}/>
+
+          {/* 유의사항 */}
+          <div className="service-notice">
+            {[
+              {icon:"✅",text:"제작된 이미지·영상 상업적 사용 가능"},
+              {icon:"🔒",text:"독점 라이선스 / 영구 사용 가능"},
+              {icon:"⚠️",text:"실사체·실존 인물 대상 의뢰는 거부될 수 있습니다"},
+              {icon:"❌",text:"이미지 전송 후 단순 변심에 의한 환불·교환 불가"}
+            ].map((item,i)=>(
+              <div key={i} className="notice-item" style={{fontSize:"clamp(13px,1.3vw,15px)"}}>
+                <span>{item.icon}</span>{item.text}
+              </div>
+            ))}
           </div>
         </div>
       </div>
