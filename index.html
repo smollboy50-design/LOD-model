@@ -320,11 +320,41 @@ function VideoCard({idx,url,onSave}){
   );
 }
 
+function EditableText({value,onSave,tag:"Tag"="span",style={},className=""}){
+  const [editing,setEditing]=useState(false);
+  const [val,setVal]=useState(value);
+  if(!IS_ADMIN)return <Tag style={style} className={className}>{value}</Tag>;
+  if(editing)return(
+    <span style={{position:"relative",display:"inline-block"}}>
+      <textarea value={val} onChange={e=>setVal(e.target.value)}
+        style={{fontSize:"inherit",fontWeight:"inherit",color:"#0a0a0a",background:"#CCFF00",border:"none",borderRadius:8,padding:"4px 8px",fontFamily:"inherit",width:"100%",minWidth:200,resize:"vertical"}}
+        autoFocus/>
+      <span style={{display:"flex",gap:6,marginTop:4}}>
+        <button onClick={async()=>{await onSave(val);setEditing(false);}} style={{background:"#CCFF00",border:"none",borderRadius:6,padding:"4px 10px",fontWeight:900,cursor:"pointer",fontSize:11}}>저장</button>
+        <button onClick={()=>{setVal(value);setEditing(false);}} style={{background:"rgba(255,255,255,.1)",border:"none",borderRadius:6,padding:"4px 10px",color:"#fff",cursor:"pointer",fontSize:11}}>취소</button>
+      </span>
+    </span>
+  );
+  return(
+    <Tag style={{...style,outline:"1px dashed rgba(204,255,0,.4)",cursor:"pointer",borderRadius:4}} className={className}
+      onClick={()=>setEditing(true)} title="클릭하여 수정">
+      {value}
+    </Tag>
+  );
+}
+
 function App(){
   const [photos,setPhotos]=useState(Array(8).fill(""));
   const [videos,setVideos]=useState(Array(4).fill(""));
   const [ready,setReady]=useState(false);
   const [prices,setPrices]=useState({p1:"4,000원",p2:"3,000원",v30:"50,000원",v60:"100,000원"});
+  const [texts,setTexts]=useState({
+    hero_title:"인플루언서 패션\nAI 모델 제작",
+    hero_sub:"모델샷과 모델영상을 만들어 드립니다.",
+    contact_title:"지금 바로 문의하세요",
+    contact_sub:"의상 사진을 보내주시면 빠르게 견적을 안내해 드립니다",
+  });
+  const [links,setLinks]=useState({kakao:"https://open.kakao.com/",tiktok:"https://www.tiktok.com/@glggid",youtube:"https://www.youtube.com/"});
   useEffect(()=>{
     loadSheetData().then(data=>{
       setPrices({
@@ -333,9 +363,25 @@ function App(){
         v30:data.video_30s?Number(data.video_30s).toLocaleString()+"원":"50,000원",
         v60:data.video_60s?Number(data.video_60s).toLocaleString()+"원":"100,000원",
       });
+      setLinks(l=>({
+        kakao:data.kakao_link||l.kakao,
+        tiktok:data.tiktok_link||l.tiktok,
+        youtube:data.youtube_link||l.youtube,
+      }));
+      setTexts(t=>({
+        ...t,
+        hero_title:data.hero_title||t.hero_title,
+        hero_sub:data.hero_sub||t.hero_sub,
+        contact_title:data.contact_title||t.contact_title,
+        contact_sub:data.contact_sub||t.contact_sub,
+      }));
       setReady(true);
     });
   },[]);
+  const saveText=(key)=>async(val)=>{
+    setTexts(t=>({...t,[key]:val}));
+    await saveToSheet(key,val);
+  };
   return(
     <div className="shell">
 
@@ -350,11 +396,12 @@ function App(){
           <LDLogo size={180}/>
           <div style={{textAlign:"left"}}>
             <h1 style={{fontSize:"clamp(40px,5vw,76px)",fontWeight:900,lineHeight:1.1,marginBottom:24,color:"#f0ece4"}}>
-              인플루언서 패션<br/>AI 모델 제작
+              <EditableText value={texts.hero_title} onSave={saveText("hero_title")} tag="span"
+                style={{whiteSpace:"pre-line"}}/>
             </h1>
             <p style={{fontSize:"clamp(16px,1.8vw,22px)",lineHeight:1.9}}>
               <span style={{color:"#CCFF00",fontWeight:700}}>의상 사진만 있으면</span>
-              <span style={{color:"rgba(240,236,228,.65)"}}> 모델샷과 모델영상을 만들어 드립니다.</span>
+              <span style={{color:"rgba(240,236,228,.65)"}}> <EditableText value={texts.hero_sub} onSave={saveText("hero_sub")} tag="span"/></span>
             </p>
           </div>
         </div>
@@ -376,12 +423,22 @@ function App(){
           {photos.map((url,i)=><PhotoCard key={i} idx={i} url={url} onSave={(idx,newUrl)=>setPhotos(p=>p.map((u,j)=>j===idx?newUrl:u))}/>)}
         </div>
         <div className="btn-row">
-          <a href={KAKAO_LINK} target="_blank" rel="noopener noreferrer" className="lime-btn">💬 카카오톡 상담</a>
-          <a href={TIKTOK_LINK} target="_blank" rel="noopener noreferrer" className="lime-btn">
+          <a href={links.kakao} target="_blank" rel="noopener noreferrer" className="lime-btn">💬 카카오톡 상담</a>
+          <a href={links.tiktok} target="_blank" rel="noopener noreferrer" className="lime-btn">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="#0a0a0a"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg>
             틱톡에서 확인하기
           </a>
         </div>
+        {IS_ADMIN&&<div style={{marginTop:12,padding:"12px 16px",background:"rgba(204,255,0,.06)",borderRadius:10,border:"1px dashed rgba(204,255,0,.3)"}}>
+          <div style={{fontSize:11,color:"rgba(204,255,0,.7)",marginBottom:8,fontWeight:700}}>🔧 링크 관리</div>
+          {[{label:"카카오톡",key:"kakao",sheet:"kakao_link"},{label:"틱톡",key:"tiktok",sheet:"tiktok_link"}].map((l,i)=>(
+            <div key={i} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
+              <span style={{fontSize:12,color:"rgba(255,255,255,.5)",minWidth:60}}>{l.label}</span>
+              <input defaultValue={links[l.key]} onBlur={async e=>{setLinks(lk=>({...lk,[l.key]:e.target.value}));await saveToSheet(l.sheet,e.target.value);}}
+                style={{flex:1,fontSize:11,padding:"4px 8px",borderRadius:6,border:"1px solid rgba(204,255,0,.3)",background:"rgba(0,0,0,.5)",color:"#f0ece4"}}/>
+            </div>
+          ))}
+        </div>}
         <div className="divider"><div className="divider-diamond"/></div>
       </div>
 
@@ -401,12 +458,22 @@ function App(){
           {videos.map((url,i)=><VideoCard key={i} idx={i} url={url} onSave={(idx,newUrl)=>setVideos(p=>p.map((u,j)=>j===idx?newUrl:u))}/>)}
         </div>
         <div className="btn-row">
-          <a href={KAKAO_LINK} target="_blank" rel="noopener noreferrer" className="lime-btn">💬 카카오톡 상담</a>
-          <a href={YOUTUBE_LINK} target="_blank" rel="noopener noreferrer" className="lime-btn">
+          <a href={links.kakao} target="_blank" rel="noopener noreferrer" className="lime-btn">💬 카카오톡 상담</a>
+          <a href={links.youtube} target="_blank" rel="noopener noreferrer" className="lime-btn">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="#0a0a0a"><path d="M23 7s-.3-2-1.2-2.7c-1.1-1.2-2.4-1.2-3-1.3C16.6 3 12 3 12 3s-4.6 0-6.8.1c-.6.1-1.9.1-3 1.3C1.3 5 1 7 1 7S.7 9.1.7 11.2v2c0 2.1.3 4.2.3 4.2s.3 2 1.2 2.7c1.1 1.2 2.6 1.1 3.3 1.2C7.2 21.4 12 21.4 12 21.4s4.6 0 6.8-.2c.6-.1 1.9-.1 3-1.3.9-.7 1.2-2.7 1.2-2.7s.3-2.1.3-4.2v-2C23.3 9.1 23 7 23 7zM9.7 15.5V8.4l8.1 3.6-8.1 3.5z"/></svg>
             유튜브에서 확인하기
           </a>
         </div>
+        {IS_ADMIN&&<div style={{marginTop:12,padding:"12px 16px",background:"rgba(204,255,0,.06)",borderRadius:10,border:"1px dashed rgba(204,255,0,.3)"}}>
+          <div style={{fontSize:11,color:"rgba(204,255,0,.7)",marginBottom:8,fontWeight:700}}>🔧 링크 관리</div>
+          {[{label:"카카오톡",key:"kakao",sheet:"kakao_link"},{label:"유튜브",key:"youtube",sheet:"youtube_link"}].map((l,i)=>(
+            <div key={i} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
+              <span style={{fontSize:12,color:"rgba(255,255,255,.5)",minWidth:60}}>{l.label}</span>
+              <input defaultValue={links[l.key]} onBlur={async e=>{setLinks(lk=>({...lk,[l.key]:e.target.value}));await saveToSheet(l.sheet,e.target.value);}}
+                style={{flex:1,fontSize:11,padding:"4px 8px",borderRadius:6,border:"1px solid rgba(204,255,0,.3)",background:"rgba(0,0,0,.5)",color:"#f0ece4"}}/>
+            </div>
+          ))}
+        </div>}
         <div className="divider"><div className="divider-diamond"/></div>
       </div>
 
@@ -452,10 +519,18 @@ function App(){
             <div className="accordion-body-inner">
               <table>
                 <tbody>
-                  <tr><td>📷 사진 1컷 (소매)</td><td style={{color:"#CCFF00",fontWeight:700}}>{prices.p1}</td></tr>
-                  <tr><td>📷 사진 1컷 (도매·현금)</td><td style={{color:"#CCFF00",fontWeight:700}}>{prices.p2}</td></tr>
-                  <tr><td>🎬 영상 30초</td><td style={{color:"#CCFF00",fontWeight:700}}>{prices.v30}</td></tr>
-                  <tr><td>🎬 영상 1분</td><td style={{color:"#CCFF00",fontWeight:700}}>{prices.v60}</td></tr>
+                  <tr><td>📷 사진 1컷 (소매)</td><td style={{color:"#CCFF00",fontWeight:700}}>
+                    <EditableText value={prices.p1} onSave={async(v)=>{setPrices(p=>({...p,p1:v}));await saveToSheet("photo_price1",v.replace(/[^0-9]/g,""));}} tag="span"/>
+                  </td></tr>
+                  <tr><td>📷 사진 1컷 (도매·현금)</td><td style={{color:"#CCFF00",fontWeight:700}}>
+                    <EditableText value={prices.p2} onSave={async(v)=>{setPrices(p=>({...p,p2:v}));await saveToSheet("photo_price2",v.replace(/[^0-9]/g,""));}} tag="span"/>
+                  </td></tr>
+                  <tr><td>🎬 영상 30초</td><td style={{color:"#CCFF00",fontWeight:700}}>
+                    <EditableText value={prices.v30} onSave={async(v)=>{setPrices(p=>({...p,v30:v}));await saveToSheet("video_30s",v.replace(/[^0-9]/g,""));}} tag="span"/>
+                  </td></tr>
+                  <tr><td>🎬 영상 1분</td><td style={{color:"#CCFF00",fontWeight:700}}>
+                    <EditableText value={prices.v60} onSave={async(v)=>{setPrices(p=>({...p,v60:v}));await saveToSheet("video_60s",v.replace(/[^0-9]/g,""));}} tag="span"/>
+                  </td></tr>
                 </tbody>
               </table>
             </div>
@@ -503,8 +578,12 @@ function App(){
       {/* 문의 */}
       <div style={{background:"rgba(204,255,0,.06)",borderTop:"1px solid rgba(204,255,0,.2)",borderBottom:"1px solid rgba(204,255,0,.2)",padding:"80px 50px",textAlign:"center"}}>
         <div style={{fontSize:13,letterSpacing:".5em",color:"rgba(204,255,0,.7)",fontWeight:700,textTransform:"uppercase",marginBottom:16}}>CONTACT</div>
-        <h2 style={{fontSize:"clamp(32px,3.5vw,56px)",fontWeight:900,marginBottom:16,lineHeight:1.2,color:"#f0ece4"}}>지금 바로 문의하세요</h2>
-        <p style={{fontSize:"clamp(15px,1.8vw,20px)",color:"rgba(240,236,228,.5)",marginBottom:40,lineHeight:1.9}}>의상 사진을 보내주시면 빠르게 견적을 안내해 드립니다</p>
+        <h2 style={{fontSize:"clamp(32px,3.5vw,56px)",fontWeight:900,marginBottom:16,lineHeight:1.2,color:"#f0ece4"}}>
+          <EditableText value={texts.contact_title} onSave={saveText("contact_title")} tag="span"/>
+        </h2>
+        <p style={{fontSize:"clamp(15px,1.8vw,20px)",color:"rgba(240,236,228,.5)",marginBottom:40,lineHeight:1.9}}>
+          <EditableText value={texts.contact_sub} onSave={saveText("contact_sub")} tag="span"/>
+        </p>
         <a href={KAKAO_LINK} target="_blank" rel="noopener noreferrer" className="lime-btn" style={{fontSize:18,padding:"18px 48px",flex:"none",maxWidth:"280px"}}>
           💬 카카오톡 문의하기
         </a>
