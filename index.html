@@ -112,54 +112,65 @@ html,body{
   .hero-bg{padding-top:40px !important;padding-bottom:40px !important;}
   .hero-row{flex-direction:column !important;align-items:center !important;gap:20px !important;text-align:center !important;}
   .hero-row h1{font-size:clamp(36px,9vw,52px) !important;text-align:center;}
-  .hero-row p{font-size:clamp(14px,4vw,18px) !important;text-align:center;}
+  .hero-row p{font-size:clamp(18px,5vw,24px) !important;text-align:center;}
+
+  /* 1번 - 의상 사진만 있으면 폰에서 빛나는 효과 */
+  .hero-highlight{
+    color:#CCFF00 !important;
+    font-weight:900 !important;
+    text-shadow:0 0 12px rgba(204,255,0,.8), 0 0 24px rgba(204,255,0,.4);
+  }
 
   /* 섹션 헤더 */
   .section-header{flex-direction:column;align-items:flex-start;gap:16px;padding:24px 16px;background:none;border:none;}
   .section-main-title{font-size:clamp(28px,8vw,42px);word-break:keep-all;}
-  .section-sub-title{font-size:clamp(13px,3.5vw,18px);letter-spacing:.08em;}
+  .section-sub-title{font-size:clamp(14px,3.5vw,18px) !important;letter-spacing:.08em;}
   .section-num{font-size:10px;letter-spacing:3px;}
-  .section-desc-item{font-size:clamp(13px,3.5vw,16px);line-height:1.9;word-break:keep-all;}
+
+  /* 2번 - 불릿 목록 흰색 + 2사이즈 크게 */
+  .section-desc-item{font-size:clamp(17px,4.5vw,20px) !important;line-height:2;word-break:keep-all;color:#f0ece4 !important;}
 
   /* 카드 그리드 */
   .grid4{grid-template-columns:repeat(2,1fr);gap:8px;}
 
-  /* 버튼 */
-  .btn-row{height:auto;display:flex;flex-direction:row;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px;}
-  .btn-row a:first-child,.btn-row a:last-child{position:static;transform:none;width:auto;flex:1;min-width:130px;max-width:200px;}
-  .lime-btn{padding:14px 16px;font-size:13px;}
+  /* 3번 - 버튼 크기 키우기 */
+  .btn-row{height:auto;display:flex;flex-direction:row;gap:10px;justify-content:center;flex-wrap:nowrap;margin-top:16px;}
+  .btn-row a:first-child,.btn-row a:last-child{position:static;transform:none;flex:1;}
+  .brand-btn{padding:16px 12px !important;font-size:16px !important;white-space:nowrap;}
 
   /* 서비스 */
   .service-wrap{padding:24px 16px;}
-  .service-intro{font-size:14px;margin-bottom:24px;}
-  .service-grid{grid-template-columns:1fr;gap:20px;margin-bottom:24px;}
-  .service-block-title{font-size:15px;}
-  .service-block-item{font-size:13px;word-break:keep-all;}
   .service-notice{grid-template-columns:1fr;gap:12px;}
-  .notice-item{font-size:13px;word-break:keep-all;}
 
-  /* 아코디언 */
-  .accordion-grid{grid-template-columns:1fr;}
-  .accordion-title{font-size:15px;}
-  .accordion-header{padding:18px 20px;}
-  .accordion-body-inner{padding:0 20px 20px;}
-  .accordion-body p,.accordion-body ul li{font-size:13px;word-break:keep-all;}
-  .accordion-body td{font-size:12px;word-break:keep-all;}
+  /* 4번 - 소개글 흰색 */
+  .service-intro{font-size:17px;margin-bottom:24px;color:#f0ece4 !important;}
+
+  /* 5번 - 준비사항/유의사항 글자 흰색 + 2사이즈 크게 */
+  .prep-item{font-size:17px !important;color:#f0ece4 !important;}
+  .notice-item{font-size:16px !important;color:#f0ece4 !important;word-break:keep-all;}
+
+  /* 탭 패널 */
+  .tab-panel{grid-template-columns:1fr;}
+  .tab-title{font-size:20px;}
+  .tab-content-inner{padding:0 16px 20px;}
+  .tab-btn{padding:18px 16px;}
+
+  /* 6번 - 탭 내부 글자 흰색 + 2사이즈 크게 */
+  .tab-content-inner p{font-size:17px !important;color:#f0ece4 !important;line-height:2;}
+  .tab-content-inner td{font-size:16px !important;color:#f0ece4 !important;}
+  .tab-content-inner li{font-size:17px !important;color:#f0ece4 !important;}
 
   /* CONTACT */
   .contact-section{padding:48px 20px !important;}
 
   /* divider */
   .divider{margin:40px 0;}
-
-  /* 영문 소제목 크기 */
-  .section-sub-title{font-size:clamp(12px,3vw,16px) !important;letter-spacing:.06em;}
 }
 
 @media(max-width:480px){
   .grid4{grid-template-columns:repeat(2,1fr);gap:6px;}
-  .btn-row a:first-child,.btn-row a:last-child{min-width:110px;font-size:12px;padding:12px 12px;}
   .section-main-title{font-size:clamp(26px,7vw,36px);}
+  .brand-btn{font-size:14px !important;padding:14px 10px !important;}
 }
 
 /* 브랜드 버튼 */
@@ -526,7 +537,7 @@ function App(){
                 style={{whiteSpace:"pre-line"}}/>
             </h1>
             <p style={{fontSize:"clamp(18px,2vw,26px)",lineHeight:1.9}}>
-              <span style={{color:"#CCFF00",fontWeight:900,fontSize:"clamp(20px,2.2vw,28px)"}}>의상 사진만 있으면</span>
+              <span className="hero-highlight" style={{color:"#CCFF00",fontWeight:900,fontSize:"clamp(20px,2.2vw,28px)"}}>의상 사진만 있으면</span>
               <span style={{color:"rgba(240,236,228,.65)"}}> <EditableText value={texts.hero_sub} onSave={saveText("hero_sub")} tag="span"/></span>
             </p>
           </div>
