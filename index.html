@@ -10,83 +10,298 @@
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html,body{background:#0a0a0a;color:#f0ece4;font-family:'Noto Sans KR',sans-serif;overflow-x:hidden;min-height:100%;width:100%;}
-#root{width:100%;min-height:100vh;display:flex;justify-content:center;background:#0a0a0a;}
-.shell{width:100%;max-width:1060px;min-height:100vh;background:#0a0a0a;box-sizing:border-box;text-align:center;}
-.inner{padding:0 50px;width:100%;box-sizing:border-box;}
-.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:16px 20px 0;box-sizing:border-box;}
-.hero-bg{position:relative;background-image:linear-gradient(rgba(204,255,0,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(204,255,0,.03) 1px,transparent 1px);background-size:40px 40px;}
+html,body{
+  background:#0a0a0a;
+  color:#f0ece4;
+  font-family:'Noto Sans KR',sans-serif;
+  overflow-x:hidden;
+  min-height:100%;
+  width:100%;
+}
+/* 전체 화면 중앙 정렬 */
+#root{
+  width:100%;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  background:#0a0a0a;
+}
+/* 콘텐츠 박스 — 양옆 선 포함 */
+.shell{
+  width:100%;
+  max-width:1060px;
+  min-height:100vh;
+  background:#0a0a0a;
+  box-sizing:border-box;
+  text-align:center;
+}
+/* 내부 패딩 */
+.inner{
+  padding:0 50px;
+  width:100%;
+  box-sizing:border-box;
+}
+.grid4{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  padding:16px 20px 0;
+  box-sizing:border-box;
+}
+/* radial glow 히어로 배경 */
+.hero-bg{position:relative;}
 .hero-bg::before{content:"";position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(204,255,0,.06) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;}
-.section-num{font-size:11px;color:rgba(204,255,0,.45);font-weight:700;letter-spacing:4px;margin-bottom:6px;}
-@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
-.photo-card::after,.video-card::after{content:"";position:absolute;inset:0;border-radius:14px;padding:1px;background:linear-gradient(90deg,rgba(204,255,0,.05),rgba(204,255,0,.5),rgba(204,255,0,.05));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;background-size:200% 100%;animation:shimmer 3s linear infinite;pointer-events:none;}
-.photo-card{position:relative;padding-top:177.78%;background:#111;border-radius:18px;overflow:hidden;border:1px solid rgba(240,236,228,.1);cursor:pointer;transition:border-color .3s,transform .3s;}
-.photo-card:hover{border-color:rgba(204,255,0,.4);transform:translateY(-6px);}
-.photo-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
-.video-card{position:relative;padding-top:177.78%;background:#111;border-radius:18px;overflow:hidden;border:1px solid rgba(240,236,228,.1);transition:border-color .3s,transform .3s;}
-.video-card:hover{border-color:rgba(204,255,0,.4);transform:translateY(-6px);}
-.video-card video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
-.section-main-title{font-size:clamp(36px,4vw,58px);font-weight:900;line-height:1.15;display:flex;align-items:center;gap:14px;}
-.section-main-title::before{content:"";display:block;width:5px;height:clamp(36px,4vw,58px);background:#CCFF00;border-radius:3px;flex-shrink:0;}
-.section-sub-title{font-size:clamp(16px,2vw,24px);color:rgba(204,255,0,.8);font-weight:700;letter-spacing:.14em;margin-top:8px;}
-.section-desc-item{font-size:clamp(15px,1.6vw,20px);color:rgba(240,236,228,.7);line-height:2.2;display:flex;align-items:flex-start;gap:10px;text-align:left;}
-.section-desc-item::before{content:" —";color:rgba(204,255,0,.6);flex-shrink:0;font-weight:700;}
+
+/* 2번 섹션 헤더 배경 */
 .section-header{display:flex;align-items:stretch;justify-content:center;gap:48px;margin-bottom:24px;background:rgba(204,255,0,.02);border-top:1px solid rgba(204,255,0,.06);border-bottom:1px solid rgba(204,255,0,.06);padding:32px 0;}
-.section-left{flex-shrink:0;display:flex;flex-direction:column;justify-content:center;text-align:left;}
-.section-right{display:flex;flex-direction:column;justify-content:center;}
-.divider{display:flex;align-items:center;gap:16px;margin:72px 0;}
-.divider::before,.divider::after{content:"";flex:1;height:1px;background:rgba(240,236,228,.08);}
-.divider-diamond{width:8px;height:8px;background:#CCFF00;transform:rotate(45deg);flex-shrink:0;}
+
+/* 3번 서비스 아이콘 박스 */
+.service-icon-box{width:30px;height:30px;border-radius:6px;background:rgba(204,255,0,.1);border:1px solid rgba(204,255,0,.2);display:inline-flex;align-items:center;justify-content:center;margin-right:8px;vertical-align:middle;flex-shrink:0;}
+
+/* 4번 모바일 반응형 */
+@media(max-width:768px){
+  .inner{padding:0 20px;}
+  .section-header{flex-direction:column;align-items:flex-start;gap:20px;padding:24px 20px;}
+  .grid4{grid-template-columns:repeat(2,1fr);}
+  .service-grid{grid-template-columns:1fr;}
+  .service-notice{grid-template-columns:1fr;}
+  .btn-row{height:auto;display:flex;flex-direction:column;gap:10px;align-items:center;}
+  .btn-row a:first-child,.btn-row a:last-child{position:static;transform:none;width:80%;}
+  .shell{max-width:100%;}
+  h1{font-size:clamp(32px,8vw,56px) !important;}
+}
+@media(max-width:480px){
+  .grid4{grid-template-columns:repeat(2,1fr);}
+  .hero-inner{flex-direction:column !important;text-align:center !important;}
+}
+
+.photo-card::after,.video-card::after{content:"";position:absolute;inset:0;border-radius:14px;padding:1px;background:linear-gradient(90deg,rgba(204,255,0,.05),rgba(204,255,0,.5),rgba(204,255,0,.05));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;background-size:200% 100%;animation:shimmer 3s linear infinite;pointer-events:none;}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+
+/* 섹션 번호 */
+.section-num{font-size:11px;color:rgba(204,255,0,.45);font-weight:700;letter-spacing:4px;margin-bottom:6px;}
+
+/* ripple */
+.ripple-circle{position:absolute;border-radius:50%;background:rgba(0,0,0,.2);transform:scale(0);animation:rippleAnim .6s linear;pointer-events:none;}
+@keyframes rippleAnim{to{transform:scale(4);opacity:0;}}
+.lime-btn{position:relative;overflow:hidden;}
+
+
+
+/* 5번 파티클 */
+.particle{position:fixed;width:3px;height:3px;background:#CCFF00;border-radius:50%;pointer-events:none;z-index:9990;}
+
+/* 커서 효과 - 점만 */
+@media(hover:hover){
+  body{cursor:none;}
+  #cursor-dot{width:8px;height:8px;background:#CCFF00;border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
+}
+@media(hover:none){
+  #cursor-dot{display:none;}
+}
+
+/* 2번 버튼 hover 스케일+글로우 */
+.lime-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#CCFF00;color:#0a0a0a;border:none;border-radius:50px;padding:16px 48px;font-size:16px;font-weight:900;cursor:pointer;font-family:inherit;text-decoration:none;transition:transform .2s,box-shadow .2s;white-space:nowrap;}
+.lime-btn:hover{transform:scale(1.05);box-shadow:0 0 24px rgba(204,255,0,.4);}
+
+/* 모바일 반응형 */
+@media(max-width:768px){
+  .inner{padding:0 16px;}
+  .shell{max-width:100%;}
+
+  /* 히어로 */
+  .hero-bg{padding-top:40px !important;padding-bottom:40px !important;}
+  .hero-row{flex-direction:column !important;align-items:center !important;gap:20px !important;text-align:center !important;}
+  .hero-row h1{font-size:clamp(36px,9vw,52px) !important;text-align:center;}
+  .hero-row p{font-size:clamp(18px,5vw,24px) !important;text-align:center;}
+
+  /* 1번 - 의상 사진만 있으면 폰에서 빛나는 효과 */
+  .hero-highlight{
+    color:#CCFF00 !important;
+    font-weight:900 !important;
+    text-shadow:0 0 12px rgba(204,255,0,.8), 0 0 24px rgba(204,255,0,.4);
+  }
+
+  /* 섹션 헤더 */
+  .section-header{flex-direction:column;align-items:flex-start;gap:16px;padding:24px 16px;background:none;border:none;}
+  .section-main-title{font-size:clamp(28px,8vw,42px);word-break:keep-all;}
+  .section-sub-title{font-size:clamp(14px,3.5vw,18px) !important;letter-spacing:.08em;}
+  .section-num{font-size:10px;letter-spacing:3px;}
+
+  /* 2번 - 불릿 목록 흰색 + 2사이즈 크게 */
+  .section-desc-item{font-size:clamp(17px,4.5vw,20px) !important;line-height:2;word-break:keep-all;color:#f0ece4 !important;}
+
+  /* 카드 그리드 */
+  .grid4{grid-template-columns:repeat(2,1fr);gap:8px;}
+
+  /* 3번 - 버튼 크기 키우기 */
+  .btn-row{height:auto;display:flex;flex-direction:row;gap:8px;justify-content:center;flex-wrap:nowrap;margin-top:16px;padding:0 16px;}
+  .btn-row a:first-child,.btn-row a:last-child{position:static;transform:none;flex:none;width:auto;}
+  .brand-btn{padding:12px 16px !important;font-size:15px !important;white-space:nowrap;min-width:unset !important;max-width:unset !important;flex:none !important;}
+
+  /* 서비스 */
+  .service-wrap{padding:24px 16px;}
+  .service-notice{grid-template-columns:1fr;gap:12px;}
+
+  /* 4번 - 소개글 흰색 */
+  .service-intro{font-size:17px;margin-bottom:24px;color:#f0ece4 !important;}
+
+  /* 5번 - 준비사항/유의사항 글자 흰색 + 2사이즈 크게 */
+  .prep-item{font-size:17px !important;color:#f0ece4 !important;}
+  .notice-item{font-size:16px !important;color:#f0ece4 !important;word-break:keep-all;}
+
+  /* 탭 패널 */
+  .tab-panel{grid-template-columns:1fr;}
+  .tab-title{font-size:20px;}
+  .tab-content-inner{padding:0 16px 20px;}
+  .tab-btn{padding:18px 16px;}
+
+  /* 6번 - 탭 내부 글자 흰색 + 2사이즈 크게 */
+  .tab-content-inner p{font-size:17px !important;color:#f0ece4 !important;line-height:2;}
+  .tab-content-inner td{font-size:16px !important;color:#f0ece4 !important;}
+  .tab-content-inner li{font-size:17px !important;color:#f0ece4 !important;}
+
+  /* CONTACT */
+  .contact-section{padding:48px 20px !important;}
+
+  /* divider */
+  .divider{margin:40px 0;}
+}
+
+@media(max-width:480px){
+  .grid4{grid-template-columns:repeat(2,1fr);gap:6px;}
+  .section-main-title{font-size:clamp(26px,7vw,36px);}
+  .brand-btn{font-size:14px !important;padding:14px 10px !important;}
+}
+
+/* 브랜드 버튼 */
 .brand-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:none;border-radius:50px;padding:16px 32px;font-size:16px;font-weight:900;cursor:pointer;font-family:inherit;text-decoration:none;transition:transform .2s,opacity .2s;position:relative;overflow:hidden;flex:1;white-space:nowrap;min-width:180px;max-width:220px;}
 .brand-btn:hover{transform:scale(1.04);opacity:.9;}
 .kakao-btn{background:#FEE500;color:#3C1E1E;}
 .tiktok-btn{background:#000;color:#fff;}
 .youtube-btn{background:#FF0000;color:#fff;}
-.lime-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#CCFF00;color:#0a0a0a;border:none;border-radius:50px;padding:16px 48px;font-size:16px;font-weight:900;cursor:pointer;font-family:inherit;text-decoration:none;transition:opacity .2s;position:relative;overflow:hidden;}
+@media(max-width:768px){
+  .brand-btn{padding:14px 16px;font-size:15px;min-width:unset;max-width:unset;}
+}
+.tab-panel{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;position:relative;}
+.tab-item{border:1px solid rgba(240,236,228,.08);border-radius:16px;overflow:hidden;position:relative;background:rgba(240,236,228,.02);}
+.tab-item::before{content:"";position:absolute;inset:0;border-radius:16px;padding:1px;background:linear-gradient(90deg,rgba(204,255,0,.05),rgba(204,255,0,.4),rgba(204,255,0,.05));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;background-size:200% 100%;animation:shimmer 3s linear infinite;pointer-events:none;z-index:1;}
+.tab-btn{width:100%;padding:22px 24px;text-align:left;background:transparent;border:none;cursor:pointer;fontFamily:inherit;display:flex;align-items:center;justify-content:space-between;gap:12px;transition:background .2s;}
+.tab-btn:hover{background:rgba(204,255,0,.04);}
+.tab-btn-open{background:rgba(204,255,0,.06);}
+.tab-title{font-size:20px;font-weight:900;color:#f0ece4;line-height:1.3;word-break:keep-all;}
+.tab-arrow{font-size:12px;color:rgba(204,255,0,.7);flex-shrink:0;}
+.tab-content-inner{padding:0 24px 24px;font-size:15px;}
+
+/* 준비사항 가로 배치 */
+.prep-grid{display:flex;gap:24px;flex-wrap:wrap;justify-content:center;}
+.prep-item{display:flex;align-items:center;gap:8px;font-size:16px;color:rgba(240,236,228,.7);}
+.prep-item::before{content:"—";color:rgba(204,255,0,.6);flex-shrink:0;}
+
+/* 폰 버전 */
+@media(max-width:768px){
+  .tab-panel{grid-template-columns:1fr;}
+  .tab-title{font-size:18px;}
+  .tab-content-inner{padding:0 16px 20px;font-size:14px;}
+  .tab-btn{padding:18px 16px;}
+  .prep-grid{flex-direction:column;gap:12px;align-items:flex-start;}
+  .prep-item{font-size:15px;}
+
+  /* 버튼 크기 키우기 */
+  .lime-btn{font-size:15px !important;padding:16px 20px !important;}
+  .btn-row{gap:10px !important;}
+
+  /* 글자 크기 더 크게 */
+  .section-main-title{font-size:clamp(32px,8vw,44px) !important;}
+  .section-sub-title{font-size:clamp(14px,3.5vw,18px) !important;}
+  .section-desc-item{font-size:clamp(15px,4vw,18px) !important;line-height:2 !important;}
+  .service-intro{font-size:clamp(15px,4vw,17px) !important;}
+  .notice-item{font-size:clamp(14px,3.5vw,16px) !important;}
+}
+
+
+.divider{display:flex;align-items:center;gap:16px;margin:72px 0;}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:rgba(240,236,228,.08);}
+.divider::after{content:"";}
+.divider-diamond{width:8px;height:8px;background:#CCFF00;transform:rotate(45deg);flex-shrink:0;}
+
+/* 6번 히어로 그리드 배경 */
+.hero-bg{background-image:linear-gradient(rgba(204,255,0,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(204,255,0,.03) 1px,transparent 1px);background-size:40px 40px;}
+
+.photo-card{
+  position:relative;
+  padding-top:150%;
+  background:#111;
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid rgba(240,236,228,.1);
+  cursor:pointer;
+  transition:border-color .3s, transform .3s;
+}
+.photo-card:hover{border-color:rgba(204,255,0,.4);transform:translateY(-6px);}
+.photo-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.video-card{position:relative;padding-top:150%;background:#111;border-radius:18px;overflow:hidden;border:1px solid rgba(240,236,228,.1);transition:border-color .3s,transform .3s;}
+.video-card:hover{border-color:rgba(204,255,0,.4);transform:translateY(-6px);}
+.video-card video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+
+/* 3번 - 섹션 타이틀 라임 라인 장식 */
+.section-main-title{font-size:clamp(36px,4vw,58px);font-weight:900;line-height:1.15;display:flex;align-items:center;gap:14px;}
+.section-main-title::before{content:"";display:block;width:5px;height:clamp(36px,4vw,58px);background:#CCFF00;border-radius:3px;flex-shrink:0;}
+
+/* 5번 - fade-in 애니메이션 */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;animation:fadeUp .7s ease forwards;}
+.fade-in.visible{opacity:1;}
+
+/* 아코디언 */
+.accordion-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.accordion{border:1px solid rgba(240,236,228,.08);border-radius:16px;overflow:hidden;position:relative;}
+.accordion::before{content:"";position:absolute;inset:0;border-radius:16px;padding:1px;background:linear-gradient(90deg,rgba(204,255,0,.05),rgba(204,255,0,.5),rgba(204,255,0,.05));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;background-size:200% 100%;animation:shimmer 3s linear infinite;pointer-events:none;z-index:1;}
+.accordion-header{display:flex;align-items:center;justify-content:space-between;padding:22px 28px;cursor:pointer;background:rgba(240,236,228,.02);transition:background .2s;}
+.accordion-header:hover{background:rgba(204,255,0,.04);}
+.accordion-title{font-size:16px;font-weight:700;color:#f0ece4;}
+.accordion-arrow{font-size:18px;color:#CCFF00;transition:transform .3s;flex-shrink:0;}
+.accordion-arrow.open{transform:rotate(180deg);}
+.accordion-body{max-height:0;overflow:hidden;transition:max-height .4s ease;}
+.accordion-body.open{max-height:800px;}
+.accordion-body-inner{padding:0 28px 24px;}
+.accordion-body p{font-size:14px;color:rgba(240,236,228,.55);line-height:2;margin-bottom:8px;}
+.accordion-body ul{list-style:none;padding:0;}
+.accordion-body ul li{font-size:14px;color:rgba(240,236,228,.55);line-height:2;}
+.accordion-body ul li::before{content:"·";color:#CCFF00;margin-right:8px;}
+.accordion-body table{width:100%;font-size:13px;border-collapse:collapse;margin-top:8px;}
+.accordion-body td{padding:10px 12px;border-bottom:1px solid rgba(240,236,228,.06);color:rgba(240,236,228,.55);}
+.accordion-body td:first-child{color:rgba(240,236,228,.3);width:40%;}
+
+
+
+.lime-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#CCFF00;color:#0a0a0a;border:none;border-radius:50px;padding:16px 48px;font-size:16px;font-weight:900;cursor:pointer;font-family:inherit;text-decoration:none;transition:opacity .2s;}
 .lime-btn:hover{opacity:.85;}
 .btn-row{position:relative;width:100%;height:56px;margin-top:12px;}
 .btn-row a:first-child{position:absolute;left:25%;transform:translateX(-50%);}
 .btn-row a:last-child{position:absolute;left:75%;transform:translateX(-50%);}
+
 .upload-btn{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(204,255,0,.9);color:#0a0a0a;border:none;border-radius:16px;padding:5px 12px;font-size:10px;font-weight:900;cursor:pointer;white-space:nowrap;z-index:3;font-family:inherit;}
 .progress-overlay{position:absolute;inset:0;background:rgba(0,0,0,.82);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:4;}
 .progress-bar-wrap{width:72%;height:5px;background:rgba(255,255,255,.18);border-radius:3px;overflow:hidden;}
 .progress-bar-fill{height:100%;background:#CCFF00;border-radius:3px;transition:width .25s;}
-.tab-panel{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
-.tab-item{border:1px solid rgba(240,236,228,.08);border-radius:16px;overflow:hidden;position:relative;background:rgba(240,236,228,.02);}
-.tab-item::before{content:"";position:absolute;inset:0;border-radius:16px;padding:1px;background:linear-gradient(90deg,rgba(204,255,0,.05),rgba(204,255,0,.4),rgba(204,255,0,.05));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;background-size:200% 100%;animation:shimmer 3s linear infinite;pointer-events:none;z-index:1;}
-.tab-btn{width:100%;padding:22px 24px;text-align:left;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;transition:background .2s;}
-.tab-btn:hover{background:rgba(204,255,0,.04);}
-.tab-title{font-size:20px;font-weight:900;color:#f0ece4;line-height:1.3;word-break:keep-all;}
-.tab-content-inner{padding:0 24px 24px;font-size:15px;}
+.divider{height:1px;background:rgba(240,236,228,.08);margin:72px 0;}
+.section-header{display:flex;align-items:stretch;justify-content:center;gap:48px;margin-bottom:24px;}
+.section-left{flex-shrink:0;display:flex;flex-direction:column;justify-content:center;text-align:left;}
+.section-main-title{font-size:clamp(36px,4vw,58px);font-weight:900;line-height:1.15;}
+.section-sub-title{font-size:clamp(16px,2vw,24px);color:rgba(204,255,0,.8);font-weight:700;letter-spacing:.14em;margin-top:8px;}
+.section-right{display:flex;flex-direction:column;justify-content:center;}
+.section-desc-item{font-size:clamp(15px,1.6vw,20px);color:rgba(240,236,228,.7);line-height:2.2;display:flex;align-items:flex-start;gap:10px;text-align:left;}
+.section-desc-item::before{content:"—";color:rgba(204,255,0,.6);flex-shrink:0;font-weight:700;}
 .service-wrap{background:rgba(240,236,228,.03);border:1px solid rgba(240,236,228,.08);border-radius:20px;padding:40px;text-align:center;}
+.service-intro{font-size:18px;color:rgba(240,236,228,.7);line-height:2.1;margin-bottom:40px;border-left:3px solid #CCFF00;padding-left:20px;text-align:left;max-width:820px;margin-left:auto;margin-right:auto;}
+.service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-bottom:36px;max-width:960px;margin-left:auto;margin-right:auto;}
+.service-block-title{font-size:18px;font-weight:900;color:#CCFF00;margin-bottom:14px;text-align:left;}
+.service-block-item{font-size:15px;color:rgba(240,236,228,.65);line-height:2.1;display:flex;align-items:flex-start;gap:8px;text-align:left;}
+.service-block-item::before{content:"—";color:rgba(204,255,0,.4);flex-shrink:0;}
 .service-notice{border-top:1px solid rgba(240,236,228,.08);padding-top:28px;display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:960px;margin-left:auto;margin-right:auto;}
 .notice-item{font-size:15px;color:rgba(240,236,228,.45);line-height:1.9;display:flex;gap:8px;text-align:left;}
-.prep-grid{display:flex;gap:24px;flex-wrap:wrap;justify-content:center;}
-.service-icon-box{width:30px;height:30px;border-radius:6px;background:rgba(204,255,0,.1);border:1px solid rgba(204,255,0,.2);display:inline-flex;align-items:center;justify-content:center;margin-right:8px;vertical-align:middle;flex-shrink:0;}
-.ripple-circle{position:absolute;border-radius:50%;background:rgba(0,0,0,.2);transform:scale(0);animation:rippleAnim .6s linear;pointer-events:none;}
-@keyframes rippleAnim{to{transform:scale(4);opacity:0;}}
-.particle{position:fixed;width:3px;height:3px;background:#CCFF00;border-radius:50%;pointer-events:none;z-index:9990;}
-@media(hover:hover){body{cursor:none;}#cursor-dot{width:8px;height:8px;background:#CCFF00;border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}}
-@media(hover:none){#cursor-dot{display:none;}}
-@media(max-width:768px){
-  .inner{padding:0 16px;}
-  .shell{max-width:100%;}
-  .hero-row{flex-direction:column !important;align-items:center !important;gap:20px !important;text-align:center !important;}
-  .section-header{flex-direction:column;align-items:flex-start;gap:16px;padding:24px 16px;background:none;border:none;}
-  .section-main-title{font-size:clamp(28px,8vw,42px);word-break:keep-all;}
-  .grid4{grid-template-columns:repeat(2,1fr);gap:8px;}
-  .btn-row{height:auto;display:flex;flex-direction:row;gap:8px;justify-content:center;margin-top:16px;padding:0 16px;}
-  .btn-row a:first-child,.btn-row a:last-child{position:static;transform:none;flex:none;width:auto;}
-  .brand-btn{padding:12px 16px !important;font-size:15px !important;min-width:unset !important;max-width:unset !important;}
-  .service-wrap{padding:24px 16px;}
-  .service-notice{grid-template-columns:1fr;gap:12px;}
-  .tab-panel{grid-template-columns:1fr;}
-  .divider{margin:40px 0;}
-}
-@media(max-width:480px){
-  .grid4{grid-template-columns:repeat(2,1fr);gap:6px;}
-  .brand-btn{font-size:14px !important;padding:14px 10px !important;}
-}
+.notice-item::before{content:"·";color:rgba(204,255,0,.4);flex-shrink:0;}
 </style>
 </head>
 <body>
@@ -97,13 +312,32 @@ const CLOUDINARY_CLOUD="ddjdyn0yj";
 const CLOUDINARY_PRESET="lod_unsigned";
 const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbx_SvdtsSxoav9EPFu9UlBMkfjbMeYubKJbd1oDs780TUs3Vx4MnrmqSKYgvSOg7d50Ug/exec";
 const IS_ADMIN=new URLSearchParams(location.search).get("admin")==="true";
+let KAKAO_LINK="https://open.kakao.com/";
+let TIKTOK_LINK="https://www.tiktok.com/@glggid";
+let YOUTUBE_LINK="https://www.youtube.com/";
+let PHOTO_PRICE1="4,000원";
+let PHOTO_PRICE2="3,000원";
+let VIDEO_30S="50,000원";
+let VIDEO_60S="100,000원";
 
 function loadSheetData(){
   return new Promise(resolve=>{
     const name="load_"+Date.now();
     const s=document.createElement("script");
-    s.src=APPS_SCRIPT_URL+"?callback="+name+"&t="+Date.now();
-    window[name]=(data)=>{delete window[name];if(document.body.contains(s))document.body.removeChild(s);resolve(data);};
+    const p=new URLSearchParams({callback:name,t:Date.now()});
+    s.src=APPS_SCRIPT_URL+"?"+p.toString();
+    window[name]=(data)=>{
+      delete window[name];
+      if(document.body.contains(s))document.body.removeChild(s);
+      if(data.kakao_link)KAKAO_LINK=data.kakao_link;
+      if(data.tiktok_link)TIKTOK_LINK=data.tiktok_link;
+      if(data.youtube_link)YOUTUBE_LINK=data.youtube_link;
+      if(data.photo_price1)PHOTO_PRICE1=Number(data.photo_price1).toLocaleString()+"원";
+      if(data.photo_price2)PHOTO_PRICE2=Number(data.photo_price2).toLocaleString()+"원";
+      if(data.video_30s)VIDEO_30S=Number(data.video_30s).toLocaleString()+"원";
+      if(data.video_60s)VIDEO_60S=Number(data.video_60s).toLocaleString()+"원";
+      resolve(data);
+    };
     s.onerror=()=>{delete window[name];resolve({});};
     setTimeout(()=>{if(window[name]){delete window[name];resolve({});}},5000);
     document.body.appendChild(s);
@@ -112,19 +346,20 @@ function loadSheetData(){
 
 function uploadFile(file,type,onProgress){
   const max=type==="video"?500*1024*1024:20*1024*1024;
-  if(file.size>max)return Promise.reject(new Error("\ud30c\uc77c\uc774 \ub108\ubb34 \ud07d\ub2c8\ub2e4."));
+  if(file.size>max)return Promise.reject(new Error("파일이 너무 큽니다."));
   return new Promise((resolve,reject)=>{
-    const fd=new FormData();fd.append("file",file);fd.append("upload_preset",CLOUDINARY_PRESET);
+    const fd=new FormData();
+    fd.append("file",file);
+    fd.append("upload_preset",CLOUDINARY_PRESET);
     const xhr=new XMLHttpRequest();
     xhr.upload.onprogress=e=>{if(e.lengthComputable&&onProgress)onProgress(Math.round(e.loaded/e.total*100));};
-    xhr.onload=()=>{const r=JSON.parse(xhr.responseText);if(r.secure_url)resolve(r.secure_url);else reject(new Error("\uc5c5\ub85c\ub4dc \uc2e4\ud328"));};
-    xhr.onerror=()=>reject(new Error("\uc5f0\uacb0 \uc624\ub958"));
+    xhr.onload=()=>{const r=JSON.parse(xhr.responseText);if(r.secure_url)resolve(r.secure_url);else reject(new Error("업로드 실패"));};
+    xhr.onerror=()=>reject(new Error("연결 오류"));
     xhr.timeout=5*60*1000;
     xhr.open("POST",`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/${type}/upload`);
     xhr.send(fd);
   });
 }
-
 function saveToSheet(key,value){
   return new Promise(resolve=>{
     const name="save_"+Date.now();
@@ -139,24 +374,28 @@ function saveToSheet(key,value){
 }
 
 function LDLogo({size=160}){
-  return(<svg width={size} height={size} viewBox="0 0 100 100" fill="none" style={{flexShrink:0}}>
-    <circle cx="50" cy="50" r="46" stroke="rgba(204,255,0,.25)" strokeWidth="8" fill="none"/>
-    <circle cx="50" cy="50" r="46" stroke="#f0ece4" strokeWidth="4" fill="none"/>
-    <text x="50" y="66" textAnchor="middle" fontFamily="Georgia,serif" fontWeight="900" fontSize="52" fill="#f0ece4">LD</text>
-  </svg>);
+  return(
+    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" style={{flexShrink:0}}>
+      <circle cx="50" cy="50" r="46" stroke="rgba(204,255,0,.25)" strokeWidth="8" fill="none"/>
+      <circle cx="50" cy="50" r="46" stroke="#f0ece4" strokeWidth="4" fill="none"/>
+      <text x="50" y="66" textAnchor="middle" fontFamily="Georgia,serif" fontWeight="900" fontSize="52" fill="#f0ece4">LD</text>
+    </svg>
+  );
 }
 
 function TabItem({title,content}){
   const [open,setOpen]=useState(false);
-  return(<div className="tab-item">
-    <button className={`tab-btn${open?" tab-btn-open":""}`} onClick={()=>setOpen(!open)}>
-      <span className="tab-title">{title}</span>
-      <span style={{fontSize:12,color:"rgba(204,255,0,.7)",flexShrink:0,transform:open?"rotate(90deg)":"rotate(0deg)",transition:"transform .3s",display:"inline-block"}}>&#9654;</span>
-    </button>
-    <div style={{maxHeight:open?"800px":"0",overflow:"hidden",transition:"max-height .4s ease"}}>
-      <div className="tab-content-inner">{content}</div>
+  return(
+    <div className="tab-item">
+      <button className={`tab-btn${open?" tab-btn-open":""}`} onClick={()=>setOpen(!open)}>
+        <span className="tab-title">{title}</span>
+        <span className="tab-arrow" style={{transform:open?"rotate(90deg)":"rotate(0deg)",transition:"transform .3s"}}>▶</span>
+      </button>
+      <div className="tab-content" style={{maxHeight:open?"800px":"0",overflow:"hidden",transition:"max-height .4s ease"}}>
+        <div className="tab-content-inner">{content}</div>
+      </div>
     </div>
-  </div>);
+  );
 }
 
 function PhotoCard({idx,url,onSave}){
@@ -164,39 +403,35 @@ function PhotoCard({idx,url,onSave}){
   const [src,setSrc]=useState(url||"");
   const [prog,setProg]=useState(0);
   const [loading,setLoading]=useState(false);
-  useEffect(()=>{setSrc(url||"");},[url]);
+  useEffect(()=>{if(url)setSrc(url);},[url]);
   const handleFile=async(e)=>{
     const file=e.target.files[0];if(!file)return;
     setLoading(true);setProg(0);
-    try{
-      const newUrl=await uploadFile(file,"image",setProg);
-      setSrc(newUrl);
-      await saveToSheet("AI\ubaa8\ub378\uc0ac\uc9c4"+(idx+1),newUrl);
-      if(onSave)onSave(idx,newUrl);
-    }catch(err){alert(err.message);}
-    finally{setLoading(false);e.target.value="";}
+    try{const newUrl=await uploadFile(file,"image",setProg);setSrc(newUrl);await saveToSheet(`AI모델사진${idx+1}`,newUrl);if(onSave)onSave(idx,newUrl);}
+    catch(err){alert(err.message);}finally{setLoading(false);e.target.value="";}
   };
-  return(<div className="photo-card">
-    {src?<img src={src} alt={"AI \ubaa8\ub378 \uc0ac\uc9c4 "+(idx+1)}/>
-      :<div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8}}>
-        <div style={{fontSize:32,fontWeight:900,color:"rgba(204,255,0,.12)",letterSpacing:"3px"}}>{String(idx+1).padStart(2,"0")}</div>
-        <span style={{fontSize:9,color:"rgba(240,236,228,.15)",letterSpacing:".3em"}}>PHOTO</span>
+  return(
+    <div className="photo-card">
+      {src?<img src={src} alt={`AI 모델 사진 ${idx+1}`}/>
+        :<div className="card-empty">
+          <div style={{fontSize:32,fontWeight:900,color:"rgba(204,255,0,.12)",letterSpacing:"3px"}}>{String(idx+1).padStart(2,"0")}</div>
+          <span style={{fontSize:9,color:"rgba(240,236,228,.15)",letterSpacing:".3em"}}>PHOTO</span>
+        </div>}
+      {loading&&<div className="progress-overlay"><div style={{fontSize:11,color:"#CCFF00",fontWeight:700}}>업로드 {prog}%</div><div className="progress-bar-wrap"><div className="progress-bar-fill" style={{width:prog+"%"}}/></div></div>}
+      {IS_ADMIN&&!loading&&<button className="upload-btn" onClick={()=>fileRef.current?.click()}>{src?"교체":"업로드"}</button>}
+      {src&&<div style={{position:"absolute",inset:0,pointerEvents:"none",zIndex:2,overflow:"hidden",borderRadius:18}}>
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style={{position:"absolute",inset:0}}>
+          <defs>
+            <pattern id={"wm"+idx} x="0" y="0" width="160" height="80" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)">
+              <text x="10" y="40" fontFamily="Georgia,serif" fontSize="13" fill="rgba(180,180,180,0.25)" fontWeight="400" letterSpacing="2">Layer On Drape</text>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill={"url(#wm"+idx+")"}/>
+        </svg>
       </div>}
-    {loading&&<div className="progress-overlay"><div style={{fontSize:11,color:"#CCFF00",fontWeight:700}}>{"\uc5c5\ub85c\ub4dc "+prog+"%"}</div><div className="progress-bar-wrap"><div className="progress-bar-fill" style={{width:prog+"%"}}/></div></div>}
-    {IS_ADMIN&&!loading&&<button className="upload-btn" onClick={()=>fileRef.current?.click()}>{src?"\uad50\uccb4":"\uc5c5\ub85c\ub4dc"}</button>}
-    {/* 워터마크 */}
-    {src&&<div style={{position:"absolute",inset:0,pointerEvents:"none",zIndex:2,overflow:"hidden",borderRadius:18}}>
-      <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style={{position:"absolute",inset:0}}>
-        <defs>
-          <pattern id={"wm"+idx} x="0" y="0" width="160" height="80" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)">
-            <text x="10" y="40" fontFamily="Georgia,serif" fontSize="13" fill="rgba(180,180,180,0.25)" fontWeight="400" letterSpacing="2">Layer On Drape</text>
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill={"url(#wm"+idx+")"}/>
-      </svg>
-    </div>}
-    <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleFile}/>
-  </div>);
+      <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleFile}/>
+    </div>
+  );
 }
 
 function VideoCard({idx,url,onSave}){
@@ -206,172 +441,394 @@ function VideoCard({idx,url,onSave}){
   const [prog,setProg]=useState(0);
   const [loading,setLoading]=useState(false);
   const [muted,setMuted]=useState(true);
-  useEffect(()=>{setSrc(url||"");},[url]);
+  useEffect(()=>{if(url)setSrc(url);},[url]);
   const handleFile=async(e)=>{
     const file=e.target.files[0];if(!file)return;
     setLoading(true);setProg(0);
-    try{
-      const newUrl=await uploadFile(file,"video",setProg);
-      setSrc(newUrl);
-      await saveToSheet("AI\ubaa8\ub378\uc601\uc0c1"+(idx+1),newUrl);
-      if(onSave)onSave(idx,newUrl);
-    }catch(err){alert(err.message);}
-    finally{setLoading(false);e.target.value="";}
+    try{const newUrl=await uploadFile(file,"video",setProg);setSrc(newUrl);await saveToSheet(`AI모델영상${idx+1}`,newUrl);if(onSave)onSave(idx,newUrl);}
+    catch(err){alert(err.message);}finally{setLoading(false);e.target.value="";}
   };
-  return(<div className="video-card">
-    {src?<><video ref={vidRef} src={src} autoPlay muted loop playsInline/>
-      <button onClick={()=>{if(!vidRef.current)return;vidRef.current.muted=!muted;setMuted(!muted);}}
-        style={{position:"absolute",bottom:8,right:8,background:"rgba(0,0,0,.7)",border:"none",borderRadius:14,padding:"5px 10px",cursor:"pointer",color:"#fff",fontSize:10,fontWeight:700,fontFamily:"inherit",zIndex:3}}>
-        {muted?"\ubb34\uc74c":"\uc18c\ub9ac"}</button></>
-      :<div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8}}>
-        <div style={{fontSize:32,fontWeight:900,color:"rgba(204,255,0,.12)",letterSpacing:"3px"}}>{String(idx+1).padStart(2,"0")}</div>
-        <span style={{fontSize:9,color:"rgba(240,236,228,.15)",letterSpacing:".3em"}}>VIDEO</span>
-      </div>}
-    {loading&&<div className="progress-overlay"><div style={{fontSize:11,color:"#CCFF00",fontWeight:700}}>{"\uc5c5\ub85c\ub4dc "+prog+"%"}</div><div className="progress-bar-wrap"><div className="progress-bar-fill" style={{width:prog+"%"}}/></div></div>}
-    {IS_ADMIN&&!loading&&<button className="upload-btn" onClick={()=>fileRef.current?.click()}>{src?"\uad50\uccb4":"\uc5c5\ub85c\ub4dc"}</button>}
-    <input ref={fileRef} type="file" accept="video/*" style={{display:"none"}} onChange={handleFile}/>
-  </div>);
+  const toggleMute=()=>{if(!vidRef.current)return;vidRef.current.muted=!muted;setMuted(!muted);};
+  return(
+    <div className="video-card">
+      {src?<><video ref={vidRef} src={src} autoPlay muted loop playsInline/>
+        <button onClick={toggleMute} style={{position:"absolute",bottom:8,right:8,background:"rgba(0,0,0,.7)",border:"none",borderRadius:14,padding:"5px 10px",cursor:"pointer",color:"#fff",fontSize:10,fontWeight:700,fontFamily:"inherit",zIndex:3}}>
+          {muted?"🔇 소리":"🔊 음소거"}</button></>
+        :<div className="card-empty">
+          <div style={{fontSize:32,fontWeight:900,color:"rgba(204,255,0,.12)",letterSpacing:"3px"}}>{String(idx+1).padStart(2,"0")}</div>
+          <span style={{fontSize:9,color:"rgba(240,236,228,.15)",letterSpacing:".3em"}}>VIDEO</span>
+        </div>}
+      {loading&&<div className="progress-overlay"><div style={{fontSize:11,color:"#CCFF00",fontWeight:700}}>업로드 {prog}%</div><div className="progress-bar-wrap"><div className="progress-bar-fill" style={{width:prog+"%"}}/></div></div>}
+      {IS_ADMIN&&!loading&&<button className="upload-btn" onClick={()=>fileRef.current?.click()}>{src?"교체":"업로드"}</button>}
+      <input ref={fileRef} type="file" accept="video/*" style={{display:"none"}} onChange={handleFile}/>
+    </div>
+  );
+}
+
+function EditableText({value,onSave,tag,style,className}){
+  const Tag=tag||"span";
+  const st=style||{};
+  const cn=className||"";
+  const [editing,setEditing]=useState(false);
+  const [val,setVal]=useState(value);
+  if(!IS_ADMIN)return <Tag style={st} className={cn}>{value}</Tag>;
+  if(editing)return(
+    <span style={{position:"relative",display:"inline-block"}}>
+      <textarea value={val} onChange={e=>setVal(e.target.value)}
+        style={{fontSize:"inherit",fontWeight:"inherit",color:"#0a0a0a",background:"#CCFF00",border:"none",borderRadius:8,padding:"4px 8px",fontFamily:"inherit",width:"100%",minWidth:200,resize:"vertical"}}
+        autoFocus/>
+      <span style={{display:"flex",gap:6,marginTop:4}}>
+        <button onClick={async()=>{await onSave(val);setEditing(false);}} style={{background:"#CCFF00",border:"none",borderRadius:6,padding:"4px 10px",fontWeight:900,cursor:"pointer",fontSize:11}}>저장</button>
+        <button onClick={()=>{setVal(value);setEditing(false);}} style={{background:"rgba(255,255,255,.1)",border:"none",borderRadius:6,padding:"4px 10px",color:"#fff",cursor:"pointer",fontSize:11}}>취소</button>
+      </span>
+    </span>
+  );
+  return(
+    <Tag style={{...st,outline:"1px dashed rgba(204,255,0,.4)",cursor:"pointer",borderRadius:4}} className={cn}
+      onClick={()=>setEditing(true)} title="클릭하여 수정">
+      {value}
+    </Tag>
+  );
 }
 
 function App(){
   const [photos,setPhotos]=useState(Array(8).fill(""));
   const [videos,setVideos]=useState(Array(4).fill(""));
-  const [prices,setPrices]=useState({p1:"4,000\uc6d0",p2:"3,000\uc6d0",v30:"50,000\uc6d0",v60:"100,000\uc6d0"});
+  const [ready,setReady]=useState(false);
+  const [prices,setPrices]=useState({p1:"4,000원",p2:"3,000원",v30:"50,000원",v60:"100,000원"});
+  const [texts,setTexts]=useState({
+    hero_title:"인플루언서 패션\nAI 모델 제작",
+    hero_sub:"모델샷과 모델영상을 만들어 드립니다.",
+    contact_title:"지금 바로 문의하세요",
+    contact_sub:"의상 사진을 보내주시면 빠르게 견적을 안내해 드립니다",
+  });
   const [links,setLinks]=useState({kakao:"https://open.kakao.com/",tiktok:"https://www.tiktok.com/@glggid",youtube:"https://www.youtube.com/"});
-
   useEffect(()=>{
     loadSheetData().then(data=>{
-      if(data.photo_price1)setPrices(p=>({...p,p1:Number(data.photo_price1).toLocaleString()+"\uc6d0"}));
-      if(data.photo_price2)setPrices(p=>({...p,p2:Number(data.photo_price2).toLocaleString()+"\uc6d0"}));
-      if(data.video_30s)setPrices(p=>({...p,v30:Number(data.video_30s).toLocaleString()+"\uc6d0"}));
-      if(data.video_60s)setPrices(p=>({...p,v60:Number(data.video_60s).toLocaleString()+"\uc6d0"}));
-      if(data.kakao_link)setLinks(l=>({...l,kakao:data.kakao_link}));
-      if(data.tiktok_link)setLinks(l=>({...l,tiktok:data.tiktok_link}));
-      if(data.youtube_link)setLinks(l=>({...l,youtube:data.youtube_link}));
-      // ✅ 사진/영상 URL 시트에서 불러오기
-      setPhotos(Array(8).fill("").map((_,i)=>data["AI\ubaa8\ub378\uc0ac\uc9c4"+(i+1)]||""));
-      setVideos(Array(4).fill("").map((_,i)=>data["AI\ubaa8\ub378\uc601\uc0c1"+(i+1)]||""));
+      setPrices({
+        p1:data.photo_price1?Number(data.photo_price1).toLocaleString()+"원":"4,000원",
+        p2:data.photo_price2?Number(data.photo_price2).toLocaleString()+"원":"3,000원",
+        v30:data.video_30s?Number(data.video_30s).toLocaleString()+"원":"50,000원",
+        v60:data.video_60s?Number(data.video_60s).toLocaleString()+"원":"100,000원",
+      });
+      setLinks(l=>({
+        kakao:data.kakao_link||l.kakao,
+        tiktok:data.tiktok_link||l.tiktok,
+        youtube:data.youtube_link||l.youtube,
+      }));
+      setTexts(t=>({
+        ...t,
+        hero_title:data.hero_title||t.hero_title,
+        hero_sub:data.hero_sub||t.hero_sub,
+        contact_title:data.contact_title||t.contact_title,
+        contact_sub:data.contact_sub||t.contact_sub,
+      }));
+      setReady(true);
     });
   },[]);
+  const saveText=(key)=>async(val)=>{
+    setTexts(t=>({...t,[key]:val}));
+    await saveToSheet(key,val);
+  };
+  return(
+    <div className="shell">
 
-  return(<div className="shell">
-
-    {/* 히어로 */}
-    <div className="inner hero-bg" style={{paddingTop:60,paddingBottom:72}}>
-      <div style={{textAlign:"center",marginBottom:32}}>
-        <div style={{fontSize:"clamp(16px,1.8vw,22px)",letterSpacing:".5em",color:"rgba(204,255,0,.8)",fontWeight:700,textTransform:"uppercase"}}>AI FASHION MODEL</div>
-      </div>
-      <div className="hero-row" style={{display:"flex",justifyContent:"center",alignItems:"center",gap:48}}>
-        <LDLogo size={180}/>
-        <div style={{textAlign:"left"}}>
-          <h1 style={{fontSize:"clamp(40px,5vw,76px)",fontWeight:900,lineHeight:1.1,marginBottom:24,color:"#f0ece4",whiteSpace:"pre-line"}}>{"\uc778\ud50c\ub8e8\uc5b8\uc11c \ud328\uc158\nAI \ubaa8\ub378 \uc81c\uc791"}</h1>
-          <p style={{fontSize:"clamp(18px,2vw,26px)",lineHeight:1.9}}>
-            <span style={{color:"#CCFF00",fontWeight:900,fontSize:"clamp(20px,2.2vw,28px)"}}>{"\uc758\uc0c1 \uc0ac\uc9c4\ub9cc \uc788\uc73c\uba74"}</span>
-            <span style={{color:"rgba(240,236,228,.65)"}}>{" \ubaa8\ub378\uc0f7\uacfc \ubaa8\ub378\uc601\uc0c1\uc744 \ub9cc\ub4e4\uc5b4 \ub4dc\ub9bd\ub2c8\ub2e4."}</span>
-          </p>
-        </div>
-      </div>
-    </div>
-
-    {/* 사진 섹션 */}
-    <div className="inner">
-      <div className="section-header">
-        <div className="section-left">
-          <div className="section-num">01</div>
-          <div className="section-main-title">{"AI \ubaa8\ub378 \uc0ac\uc9c4"}</div>
-          <div className="section-sub-title">PHOTO PORTFOLIO</div>
-        </div>
-        <div className="section-right">
-          {["\uc608\uc05c \ubaa8\ub378 \uc0ac\uc9c4\uc774 \ud544\uc694\ud55c\ub370 \ucd2c\uc601\uc774 \ubd80\ub2f4\uc2a4\ub7ec\uc6b4 \ubd84","\uc800\uc791\uad8c \uac71\uc815 \uc5c6\ub294 \uc790\uc5f0\uc2a4\ub7ec\uc6b4 \ubaa8\ub378\uc744 \uc6d0\ud558\uc2dc\ub294 \ubd84","\uae30\uc874 AI \ubaa8\ub378\ubcf4\ub2e4 \uc2e4\uc81c \uc778\ud50c\ub8e8\uc5b8\uc11c \uac19\uc740 \uc774\ubbf8\uc9c0\ub97c \uc6d0\ud558\uc2dc\ub294 \ubd84","\uc2e0\uc0c1\ub9c8\ucf13\u00b7\uc1fc\ud551\ubab0 \uc0c1\ud488 \uc0ac\uc9c4\uc774 \ud544\uc694\ud558\uc2e0 \ubd84"].map((t,i)=><div key={i} className="section-desc-item">{t}</div>)}
-        </div>
-      </div>
-      <div className="grid4" style={{marginBottom:20}}>
-        {photos.map((url,i)=><PhotoCard key={i} idx={i} url={url} onSave={(idx,newUrl)=>setPhotos(p=>p.map((u,j)=>j===idx?newUrl:u))}/>)}
-      </div>
-      <div className="btn-row">
-        <a href={links.kakao} target="_blank" rel="noopener noreferrer" className="brand-btn kakao-btn">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="#3C1E1E"><path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.7 1.7 5.1 4.3 6.5l-1.1 4 4.5-2.9c.7.1 1.5.2 2.3.2 5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/></svg>
-          {"\uce74\uce74\uc624\ud1a1 \uc0c1\ub2f4"}
-        </a>
-        <a href={links.tiktok} target="_blank" rel="noopener noreferrer" className="brand-btn tiktok-btn">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg>
-          {"\ud2f1\ud1a1 \ud655\uc778\ud558\uae30"}
-        </a>
-      </div>
-      {IS_ADMIN&&<div style={{marginTop:12,padding:"12px 16px",background:"rgba(204,255,0,.06)",borderRadius:10,border:"1px dashed rgba(204,255,0,.3)"}}>
-        <div style={{fontSize:11,color:"rgba(204,255,0,.7)",marginBottom:8,fontWeight:700}}>{"\ud3b8\uc9d1 - \ub9c1\ud06c \uad00\ub9ac"}</div>
-        {[{label:"\uce74\uce74\uc624",key:"kakao",sheet:"kakao_link"},{label:"\ud2f1\ud1a1",key:"tiktok",sheet:"tiktok_link"}].map((l,i)=>(
-          <div key={i} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
-            <span style={{fontSize:12,color:"rgba(255,255,255,.5)",minWidth:60}}>{l.label}</span>
-            <input defaultValue={links[l.key]} onBlur={async e=>{setLinks(lk=>({...lk,[l.key]:e.target.value}));await saveToSheet(l.sheet,e.target.value);}}
-              style={{flex:1,fontSize:11,padding:"4px 8px",borderRadius:6,border:"1px solid rgba(204,255,0,.3)",background:"rgba(0,0,0,.5)",color:"#f0ece4"}}/>
+      {/* 히어로 */}
+      <div className="inner hero-bg" style={{paddingTop:60,paddingBottom:72}}>
+        <div style={{textAlign:"center",marginBottom:32}}>
+          <div style={{fontSize:"clamp(16px,1.8vw,22px)",letterSpacing:".5em",color:"rgba(204,255,0,.8)",fontWeight:700,textTransform:"uppercase"}}>
+            AI FASHION MODEL
           </div>
-        ))}
-      </div>}
-      <div className="divider"><div className="divider-diamond"/></div>
-    </div>
-
-    {/* 영상 섹션 */}
-    <div className="inner">
-      <div className="section-header">
-        <div className="section-left">
-          <div className="section-num">02</div>
-          <div className="section-main-title">{"AI \ubaa8\ub378 \uc601\uc0c1"}</div>
-          <div className="section-sub-title">VIDEO PORTFOLIO</div>
         </div>
-        <div className="section-right">
-          {["\uc601\uc5c5\uc18c\u00b7\ub9e4\uc7a5 \ud64d\ubcf4 \uc601\uc0c1 \uc81c\uc791\ube44\uac00 \ubd80\ub2f4\ub418\uc2dc\ub294 \ubd84","SNS \uad11\uace0 \uc601\uc0c1\uc774 \ud544\uc694\ud55c\ub370 \ucd2c\uc601 \uc77c\uc815 \uc7a1\uae30 \uc5b4\ub824\uc6b0\uc2e0 \ubd84","\ud2f1\ud1a1\u00b7\uc778\uc2a4\ud0c0 \ub9b4\uc2a4\uc6a9 \uc9e7\uc740 \ud328\uc158 \uc601\uc0c1\uc774 \ud544\uc694\ud558\uc2e0 \ubd84"].map((t,i)=><div key={i} className="section-desc-item">{t}</div>)}
-        </div>
-      </div>
-      <div className="grid4" style={{marginBottom:20}}>
-        {videos.map((url,i)=><VideoCard key={i} idx={i} url={url} onSave={(idx,newUrl)=>setVideos(p=>p.map((u,j)=>j===idx?newUrl:u))}/>)}
-      </div>
-      <div className="btn-row">
-        <a href={links.kakao} target="_blank" rel="noopener noreferrer" className="brand-btn kakao-btn">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="#3C1E1E"><path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.7 1.7 5.1 4.3 6.5l-1.1 4 4.5-2.9c.7.1 1.5.2 2.3.2 5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/></svg>
-          {"\uce74\uce74\uc624\ud1a1 \uc0c1\ub2f4"}
-        </a>
-        <a href={links.youtube} target="_blank" rel="noopener noreferrer" className="brand-btn youtube-btn">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M23 7s-.3-2-1.2-2.7c-1.1-1.2-2.4-1.2-3-1.3C16.6 3 12 3 12 3s-4.6 0-6.8.1c-.6.1-1.9.1-3 1.3C1.3 5 1 7 1 7S.7 9.1.7 11.2v2c0 2.1.3 4.2.3 4.2s.3 2 1.2 2.7c1.1 1.2 2.6 1.1 3.3 1.2C7.2 21.4 12 21.4 12 21.4s4.6 0 6.8-.2c.6-.1 1.9-.1 3-1.3.9-.7 1.2-2.7 1.2-2.7s.3-2.1.3-4.2v-2C23.3 9.1 23 7 23 7zM9.7 15.5V8.4l8.1 3.6-8.1 3.5z"/></svg>
-          {"\uc720\ud29c\ube0c \ud655\uc778\ud558\uae30"}
-        </a>
-      </div>
-      {IS_ADMIN&&<div style={{marginTop:12,padding:"12px 16px",background:"rgba(204,255,0,.06)",borderRadius:10,border:"1px dashed rgba(204,255,0,.3)"}}>
-        <div style={{fontSize:11,color:"rgba(204,255,0,.7)",marginBottom:8,fontWeight:700}}>{"\ud3b8\uc9d1 - \ub9c1\ud06c \uad00\ub9ac"}</div>
-        {[{label:"\uce74\uce74\uc624",key:"kakao",sheet:"kakao_link"},{label:"\uc720\ud29c\ube0c",key:"youtube",sheet:"youtube_link"}].map((l,i)=>(
-          <div key={i} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
-            <span style={{fontSize:12,color:"rgba(255,255,255,.5)",minWidth:60}}>{l.label}</span>
-            <input defaultValue={links[l.key]} onBlur={async e=>{setLinks(lk=>({...lk,[l.key]:e.target.value}));await saveToSheet(l.sheet,e.target.value);}}
-              style={{flex:1,fontSize:11,padding:"4px 8px",borderRadius:6,border:"1px solid rgba(204,255,0,.3)",background:"rgba(0,0,0,.5)",color:"#f0ece4"}}/>
+        <div className="hero-row" style={{display:"flex",justifyContent:"center",alignItems:"center",gap:48}}>
+          <LDLogo size={180}/>
+          <div style={{textAlign:"left"}}>
+            <h1 style={{fontSize:"clamp(40px,5vw,76px)",fontWeight:900,lineHeight:1.1,marginBottom:24,color:"#f0ece4"}}>
+              <EditableText value={texts.hero_title} onSave={saveText("hero_title")} tag="span"
+                style={{whiteSpace:"pre-line"}}/>
+            </h1>
+            <p style={{fontSize:"clamp(18px,2vw,26px)",lineHeight:1.9}}>
+              <span className="hero-highlight" style={{color:"#CCFF00",fontWeight:900,fontSize:"clamp(20px,2.2vw,28px)"}}>의상 사진만 있으면</span>
+              <span style={{color:"rgba(240,236,228,.65)"}}> <EditableText value={texts.hero_sub} onSave={saveText("hero_sub")} tag="span"/></span>
+            </p>
           </div>
-        ))}
-      </div>}
-      <div className="divider"><div className="divider-diamond"/></div>
-    </div>
-
-    {/* 서비스 설명 */}
-    <div className="inner" style={{paddingBottom:64}}>
-      <div className="service-wrap">
-        <div style={{textAlign:"center",marginBottom:40}}>
-          <p style={{fontSize:"clamp(16px,1.6vw,19px)",color:"rgba(240,236,228,.75)",lineHeight:2,maxWidth:700,margin:"0 auto"}}>
-            {"\uc758\uc0c1 \uc0ac\uc9c4\ub9cc \ubcf4\ub0b4\uc8fc\uc2dc\uba74 \uc790\uc5f0\uc2a4\ub7ec\uc6b4 \uc778\ud50c\ub8e8\uc5b8\uc11c \uc2a4\ud0c0\uc77c\uc758"}
-            <br/>{"\ubaa8\ub378\uc0f7\uacfc \ubaa8\ub378\uc601\uc0c1\uc744 \uc81c\uc791\ud574\ub4dc\ub9bd\ub2c8\ub2e4."}
-          </p>
-          <p style={{fontSize:"clamp(14px,1.4vw,17px)",color:"rgba(240,236,228,.45)",lineHeight:2,maxWidth:600,margin:"12px auto 0"}}>
-            {"\ud654\ubcf4 \uc2a4\ud0c0\uc77c\uc774 \uc544\ub2cc \uc2e4\uc81c SNS\uc5d0\uc11c \ubcfc \uc218 \uc788\ub294 \uc775\uc219\ud558\uace0 \uc790\uc5f0\uc2a4\ub7ec\uc6b4 \uc0ac\uc9c4"}
-          </p>
         </div>
-        <div style={{height:1,background:"rgba(240,236,228,.08)",margin:"0 0 36px"}}/>
-        <div style={{marginBottom:36}}>
-          <div style={{display:"flex",alignItems:"center",gap:10,justifyContent:"center",marginBottom:24}}>
-            <span className="service-icon-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#CCFF00" strokeWidth="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></span>
-            <span style={{fontSize:18,fontWeight:900,color:"#f0ece4",letterSpacing:"2px"}}>{"\uc900\ube44\uc0ac\ud56d"}</span>
+      </div>
+
+      {/* 사진 섹션 */}
+      <div className="inner">
+        <div className="section-header">
+          <div className="section-left">
+            <div className="section-num">01</div>
+            <div className="section-main-title">AI 모델 사진</div>
+            <div className="section-sub-title">PHOTO PORTFOLIO</div>
           </div>
-          <div className="prep-grid">
-            {[["\u2726","\uc758\uc0c1 \ub610\ub294 \uc81c\ud488 \uc0ac\uc9c4","\uc2e4\uc81c \ucd2c\uc601\ubcf8"],["\u2726","\uc131\ubcc4 / \uc5f0\ub839\ub300",""],["\u2726","\uc6d0\ud558\uc2dc\ub294 \ubd84\uc704\uae30","\ucc38\uace0 \uc0ac\uc9c4\u00b7\uc601\uc0c1"]].map((t,i)=>(
+          <div className="section-right">
+            {["예쁜 모델 사진이 필요한데 촬영이 부담스러운 분","저작권 걱정 없는 자연스러운 모델을 원하시는 분","기존 AI 모델보다 실제 인플루언서 같은 이미지를 원하시는 분","신상마켓·쇼핑몰 상품 사진이 필요하신 분"].map((t,i)=><div key={i} className="section-desc-item">{t}</div>)}
+          </div>
+        </div>
+        <div className="grid4" style={{marginBottom:20}}>
+          {photos.map((url,i)=><PhotoCard key={i} idx={i} url={url} onSave={(idx,newUrl)=>setPhotos(p=>p.map((u,j)=>j===idx?newUrl:u))}/>)}
+        </div>
+        <div className="btn-row">
+          <a href={links.kakao} target="_blank" rel="noopener noreferrer" className="brand-btn kakao-btn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#3C1E1E"><path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.7 1.7 5.1 4.3 6.5l-1.1 4 4.5-2.9c.7.1 1.5.2 2.3.2 5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/></svg>
+            카카오톡 상담
+          </a>
+          <a href={links.tiktok} target="_blank" rel="noopener noreferrer" className="brand-btn tiktok-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg>
+            틱톡 확인하기
+          </a>
+        </div>
+        {IS_ADMIN&&<div style={{marginTop:12,padding:"12px 16px",background:"rgba(204,255,0,.06)",borderRadius:10,border:"1px dashed rgba(204,255,0,.3)"}}>
+          <div style={{fontSize:11,color:"rgba(204,255,0,.7)",marginBottom:8,fontWeight:700}}>🔧 링크 관리</div>
+          {[{label:"카카오톡",key:"kakao",sheet:"kakao_link"},{label:"틱톡",key:"tiktok",sheet:"tiktok_link"}].map((l,i)=>(
+            <div key={i} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
+              <span style={{fontSize:12,color:"rgba(255,255,255,.5)",minWidth:60}}>{l.label}</span>
+              <input defaultValue={links[l.key]} onBlur={async e=>{setLinks(lk=>({...lk,[l.key]:e.target.value}));await saveToSheet(l.sheet,e.target.value);}}
+                style={{flex:1,fontSize:11,padding:"4px 8px",borderRadius:6,border:"1px solid rgba(204,255,0,.3)",background:"rgba(0,0,0,.5)",color:"#f0ece4"}}/>
+            </div>
+          ))}
+        </div>}
+        <div className="divider"><div className="divider-diamond"/></div>
+      </div>
+
+      {/* 영상 섹션 */}
+      {/* 영상 섹션 */}
+      <div className="inner">
+        <div className="section-header">
+          <div className="section-left">
+            <div className="section-num">02</div>
+            <div className="section-main-title">AI 모델 영상</div>
+            <div className="section-sub-title">VIDEO PORTFOLIO</div>
+          </div>
+          <div className="section-right">
+            {["영업소·매장 홍보 영상 제작비가 부담되시는 분","SNS 광고 영상이 필요한데 촬영 일정 잡기 어려우신 분","틱톡·인스타 릴스용 짧은 패션 영상이 필요하신 분"].map((t,i)=><div key={i} className="section-desc-item">{t}</div>)}
+          </div>
+        </div>
+        <div className="grid4" style={{marginBottom:20}}>
+          {videos.map((url,i)=><VideoCard key={i} idx={i} url={url} onSave={(idx,newUrl)=>setVideos(p=>p.map((u,j)=>j===idx?newUrl:u))}/>)}
+        </div>
+        <div className="btn-row">
+          <a href={links.kakao} target="_blank" rel="noopener noreferrer" className="brand-btn kakao-btn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#3C1E1E"><path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.7 1.7 5.1 4.3 6.5l-1.1 4 4.5-2.9c.7.1 1.5.2 2.3.2 5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/></svg>
+            카카오톡 상담
+          </a>
+          <a href={links.youtube} target="_blank" rel="noopener noreferrer" className="brand-btn youtube-btn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M23 7s-.3-2-1.2-2.7c-1.1-1.2-2.4-1.2-3-1.3C16.6 3 12 3 12 3s-4.6 0-6.8.1c-.6.1-1.9.1-3 1.3C1.3 5 1 7 1 7S.7 9.1.7 11.2v2c0 2.1.3 4.2.3 4.2s.3 2 1.2 2.7c1.1 1.2 2.6 1.1 3.3 1.2C7.2 21.4 12 21.4 12 21.4s4.6 0 6.8-.2c.6-.1 1.9-.1 3-1.3.9-.7 1.2-2.7 1.2-2.7s.3-2.1.3-4.2v-2C23.3 9.1 23 7 23 7zM9.7 15.5V8.4l8.1 3.6-8.1 3.5z"/></svg>
+            유튜브 확인하기
+          </a>
+        </div>
+        {IS_ADMIN&&<div style={{marginTop:12,padding:"12px 16px",background:"rgba(204,255,0,.06)",borderRadius:10,border:"1px dashed rgba(204,255,0,.3)"}}>
+          <div style={{fontSize:11,color:"rgba(204,255,0,.7)",marginBottom:8,fontWeight:700}}>🔧 링크 관리</div>
+          {[{label:"카카오톡",key:"kakao",sheet:"kakao_link"},{label:"유튜브",key:"youtube",sheet:"youtube_link"}].map((l,i)=>(
+            <div key={i} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
+              <span style={{fontSize:12,color:"rgba(255,255,255,.5)",minWidth:60}}>{l.label}</span>
+              <input defaultValue={links[l.key]} onBlur={async e=>{setLinks(lk=>({...lk,[l.key]:e.target.value}));await saveToSheet(l.sheet,e.target.value);}}
+                style={{flex:1,fontSize:11,padding:"4px 8px",borderRadius:6,border:"1px solid rgba(204,255,0,.3)",background:"rgba(0,0,0,.5)",color:"#f0ece4"}}/>
+            </div>
+          ))}
+        </div>}
+        <div className="divider"><div className="divider-diamond"/></div>
+      </div>
+
+      {/* 서비스 설명 */}
+      <div className="inner" style={{paddingBottom:64}}>
+        <div className="service-wrap">
+          {/* 소개글 */}
+          <div style={{textAlign:"center",marginBottom:40}}>
+            <p style={{fontSize:"clamp(16px,1.6vw,19px)",color:"rgba(240,236,228,.75)",lineHeight:2,maxWidth:700,margin:"0 auto"}}>
+              의상 사진만 보내주시면 자연스러운 인플루언서 스타일의<br/>
+              모델샷과 모델영상을 제작해드립니다.
+            </p>
+            <p style={{fontSize:"clamp(14px,1.4vw,17px)",color:"rgba(240,236,228,.45)",lineHeight:2,maxWidth:600,margin:"12px auto 0"}}>
+              화보 스타일이 아닌 실제 SNS에서 볼 수 있는 익숙하고 자연스러운 사진
+            </p>
+          </div>
+
+          {/* 구분선 */}
+          <div style={{height:1,background:"rgba(240,236,228,.08)",margin:"0 0 36px"}}/>
+
+          {/* 준비사항 */}
+          <div style={{marginBottom:36}}>
+            <div style={{display:"flex",alignItems:"center",gap:10,justifyContent:"center",marginBottom:24}}>
+              <span className="service-icon-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#CCFF00" strokeWidth="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></span>
+              <span style={{fontSize:18,fontWeight:900,color:"#f0ece4",letterSpacing:"2px"}}>준비사항</span>
+            </div>
+            <div className="prep-grid">
+ [["✦","의상 또는 제품 사진","실제 촬영본"],["✦","성별 / 연령대",""],["✦","원하시는 분위기","참고 사진·영상"]].map((t,i)=>(
               <div key={i} style={{background:"rgba(204,255,0,.06)",border:"1px solid rgba(204,255,0,.35)",borderRadius:14,padding:"20px",color:"#f0ece4",textAlign:"center",flex:1,minWidth:160,boxShadow:"0 0 12px rgba(204,255,0,.15)",lineHeight:1.7}}>
                 <div style={{fontSize:20,color:"#CCFF00",marginBottom:8}}>{t[0]}</div>
                 <div style={{fontWeight:700,fontSize:"clamp(14px,1.4vw,16px)"}}>{t[1]}</div>
                 {t[2]&&<div style={{fontSize:12,color:"rgba(240,236,228,.5)",marginTop:4}}>{t[2]}</div>}
               </div>
-            ))}>
+            ))}
+            </div>
+          </div>
+
+          {/* 구분선 */}
+          <div style={{height:1,background:"rgba(240,236,228,.08)",margin:"0 0 28px"}}/>
+
+          {/* 유의사항 */}
+          <div className="service-notice">
+            {[
+              {icon:"✅",text:"제작된 이미지·영상 상업적 사용 가능"},
+              {icon:"🔒",text:"독점 라이선스 / 영구 사용 가능"},
+              {icon:"⚠️",text:"실사체·실존 인물 대상 의뢰는 거부될 수 있습니다"},
+              {icon:"❌",text:"이미지 전송 후 단순 변심에 의한 환불·교환 불가"}
+            ].map((item,i)=>(
+              <div key={i} className="notice-item" style={{fontSize:"clamp(13px,1.3vw,15px)"}}>
+                <span>{item.icon}</span>{item.text}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* 아코디언 탭 방식 */}
+      <div className="inner" style={{paddingBottom:48}}>
+        <div className="tab-panel">
+          {[
+            {title:"전문가 정보",content:(
+              <div>
+                <p style={{fontSize:16,color:"rgba(240,236,228,.7)",lineHeight:2,marginBottom:8}}>연락 가능 시간 : 언제나 가능</p>
+                <p style={{fontSize:16,color:"rgba(240,236,228,.7)",lineHeight:2,marginBottom:8}}>평균 응답 시간 : 1시간 이내</p>
+                <p style={{fontSize:16,color:"rgba(240,236,228,.7)",lineHeight:2,marginTop:12}}>의상 사진만 보내주시면 자연스러운 인플루언서 스타일의 모델샷과 모델영상을 제작해드립니다.</p>
+              </div>
+            )},
+            {title:"가격 안내",content:(
+              <table style={{width:"100%",borderCollapse:"collapse"}}>
+                <tbody>
+                  <tr><td style={{fontSize:16,color:"rgba(240,236,228,.6)",padding:"10px 0",borderBottom:"1px solid rgba(240,236,228,.06)"}}>📷 사진 1컷 (소매)</td><td style={{color:"#CCFF00",fontWeight:700,fontSize:16,padding:"10px 0",borderBottom:"1px solid rgba(240,236,228,.06)",textAlign:"right"}}>
+                    <EditableText value={prices.p1} onSave={async(v)=>{setPrices(p=>({...p,p1:v}));await saveToSheet("photo_price1",v.replace(/[^0-9]/g,""));}} tag="span"/>
+                  </td></tr>
+                  <tr><td style={{fontSize:16,color:"rgba(240,236,228,.6)",padding:"10px 0",borderBottom:"1px solid rgba(240,236,228,.06)"}}>📷 사진 1컷 (도매·현금)</td><td style={{color:"#CCFF00",fontWeight:700,fontSize:16,padding:"10px 0",borderBottom:"1px solid rgba(240,236,228,.06)",textAlign:"right"}}>
+                    <EditableText value={prices.p2} onSave={async(v)=>{setPrices(p=>({...p,p2:v}));await saveToSheet("photo_price2",v.replace(/[^0-9]/g,""));}} tag="span"/>
+                  </td></tr>
+                  <tr><td style={{fontSize:16,color:"rgba(240,236,228,.6)",padding:"10px 0",borderBottom:"1px solid rgba(240,236,228,.06)"}}>🎬 영상 30초</td><td style={{color:"#CCFF00",fontWeight:700,fontSize:16,padding:"10px 0",borderBottom:"1px solid rgba(240,236,228,.06)",textAlign:"right"}}>
+                    <EditableText value={prices.v30} onSave={async(v)=>{setPrices(p=>({...p,v30:v}));await saveToSheet("video_30s",v.replace(/[^0-9]/g,""));}} tag="span"/>
+                  </td></tr>
+                  <tr><td style={{fontSize:16,color:"rgba(240,236,228,.6)",padding:"10px 0"}}>🎬 영상 1분</td><td style={{color:"#CCFF00",fontWeight:700,fontSize:16,padding:"10px 0",textAlign:"right"}}>
+                    <EditableText value={prices.v60} onSave={async(v)=>{setPrices(p=>({...p,v60:v}));await saveToSheet("video_60s",v.replace(/[^0-9]/g,""));}} tag="span"/>
+                  </td></tr>
+                </tbody>
+              </table>
+            )},
+            {title:"취소 및 환불 규정",content:(
+              <ul style={{listStyle:"none",padding:0}}>
+                {["용역 제공이 개시되기 전 : 취소 및 환불 가능","이미지 전송 후 단순 변심에 의한 환불·교환 불가","제공된 결과물이 계약 내용과 다르게 이행된 경우 공급받은 날로부터 3개월 이내 환불 가능"].map((t,i)=>(
+                  <li key={i} style={{fontSize:15,color:"rgba(240,236,228,.65)",lineHeight:2,display:"flex",gap:8,marginBottom:8}}>
+                    <span style={{color:"#CCFF00",flexShrink:0}}>·</span>{t}
+                  </li>
+                ))}
+              </ul>
+            )},
+            {title:"상품정보고시",content:(
+              <table style={{width:"100%",borderCollapse:"collapse"}}>
+                <tbody>
+                  {[["서비스 제공자","LOD (LAYER ON DRAPE)"],["취소/환불 조건","취소 및 환불 규정 참조"],["이용조건","상품 상세 참조"],["AI 엔진","최신 AI 프로그램 사용"],["작업일","1일 이내 완료"],["고객센터","카카오톡 문의"]].map(([k,v],i)=>(
+                    <tr key={i}><td style={{fontSize:14,color:"rgba(240,236,228,.35)",padding:"8px 0",borderBottom:"1px solid rgba(240,236,228,.06)",width:"40%"}}>{k}</td><td style={{fontSize:15,color:"rgba(240,236,228,.65)",padding:"8px 0",borderBottom:"1px solid rgba(240,236,228,.06)"}}>{v}</td></tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          ].map((item,i)=>(
+            <TabItem key={i} title={item.title} content={item.content}/>
+          ))}
+        </div>
+      </div>
+
+      {/* 문의 */}
+      <div style={{background:"rgba(204,255,0,.06)",borderTop:"1px solid rgba(204,255,0,.2)",borderBottom:"1px solid rgba(204,255,0,.2)",padding:"80px 50px",textAlign:"center"}}>
+        <div style={{fontSize:13,letterSpacing:".5em",color:"rgba(204,255,0,.7)",fontWeight:700,textTransform:"uppercase",marginBottom:16}}>CONTACT</div>
+        <h2 style={{fontSize:"clamp(32px,3.5vw,56px)",fontWeight:900,marginBottom:16,lineHeight:1.2,color:"#f0ece4"}}>
+          <EditableText value={texts.contact_title} onSave={saveText("contact_title")} tag="span"/>
+        </h2>
+        <p style={{fontSize:"clamp(15px,1.8vw,20px)",color:"rgba(240,236,228,.5)",marginBottom:40,lineHeight:1.9}}>
+          <EditableText value={texts.contact_sub} onSave={saveText("contact_sub")} tag="span"/>
+        </p>
+        <a href={KAKAO_LINK} target="_blank" rel="noopener noreferrer" className="lime-btn" style={{fontSize:18,padding:"18px 48px",flex:"none",maxWidth:"280px"}}>
+          💬 카카오톡 문의하기
+        </a>
+      </div>
+
+      {/* 푸터 */}
+      <footer style={{padding:"48px 50px",textAlign:"center"}}>
+        <LDLogo size={48}/>
+        <div style={{fontSize:15,fontWeight:900,letterSpacing:".3em",color:"rgba(240,236,228,.22)",margin:"12px 0 8px"}}>L O D</div>
+        <p style={{fontSize:12,color:"rgba(240,236,228,.16)",lineHeight:2,letterSpacing:".08em"}}>LAYER ON DRAPE · 인플루언서 패션 AI 모델 제작</p>
+        <div style={{display:"flex",gap:12,justifyContent:"center",marginTop:20}}>
+          {[{href:KAKAO_LINK,label:"💬"},{href:TIKTOK_LINK,label:"🎵"},{href:YOUTUBE_LINK,label:"▶"}].map((s,i)=>(
+            <a key={i} href={s.href} target="_blank" rel="noopener noreferrer" style={{width:38,height:38,borderRadius:"50%",border:"1px solid rgba(255,255,255,.12)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,textDecoration:"none",transition:"border-color .2s,background .2s"}}
+              onMouseEnter={e=>{e.currentTarget.style.borderColor="#CCFF00";e.currentTarget.style.background="rgba(204,255,0,.1)";}}
+              onMouseLeave={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,.12)";e.currentTarget.style.background="transparent";}}>
+              {s.label}
+            </a>
+          ))}
+        </div>
+      </footer>
+
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+
+const dot=document.createElement("div");dot.id="cursor-dot";document.body.appendChild(dot);
+document.addEventListener("mousemove",e=>{
+  dot.style.left=e.clientX+"px";dot.style.top=e.clientY+"px";
+});
+
+
+
+// 2번 ripple 효과
+document.addEventListener("click",function(e){
+  const btn=e.target.closest(".lime-btn");
+  if(!btn)return;
+  const r=document.createElement("span");
+  r.className="ripple-circle";
+  const rect=btn.getBoundingClientRect();
+  const size=Math.max(rect.width,rect.height);
+  r.style.width=r.style.height=size+"px";
+  r.style.left=(e.clientX-rect.left-size/2)+"px";
+  r.style.top=(e.clientY-rect.top-size/2)+"px";
+  btn.appendChild(r);
+  setTimeout(()=>r.remove(),600);
+});
+
+// 5번 파티클
+for(let i=0;i<20;i++){
+  const p=document.createElement("div");
+  p.className="particle";
+  const x=Math.random()*window.innerWidth;
+  const dur=4+Math.random()*6;
+  const delay=Math.random()*6;
+  p.style.cssText=`left:${x}px;top:${window.innerHeight}px;opacity:0;transition:none;`;
+  document.body.appendChild(p);
+  function animParticle(el,startX){
+    const drift=(Math.random()-.5)*100;
+    el.style.transition=`transform ${dur}s linear, opacity ${dur}s ease`;
+    el.style.transform=`translate(${drift}px,-${window.innerHeight+20}px)`;
+    el.style.opacity=(Math.random()*.4+.1).toString();
+    setTimeout(()=>{
+      el.style.transition="none";
+      el.style.transform="translate(0,0)";
+      el.style.opacity="0";
+      el.style.left=Math.random()*window.innerWidth+"px";
+      setTimeout(()=>animParticle(el),100);
+    },dur*1000);
+  }
+  setTimeout(()=>animParticle(p,x),delay*1000);
+}
+
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.style.opacity="1";e.target.style.transform="translateY(0)";}});
+},{threshold:0.15});
+document.querySelectorAll(".inner,.service-wrap,.section-header").forEach((el,i)=>{
+  el.style.opacity="0";
+  el.style.transform="translateY(28px)";
+  el.style.transition=`opacity .7s ease ${i*0.1}s, transform .7s ease ${i*0.1}s`;
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
