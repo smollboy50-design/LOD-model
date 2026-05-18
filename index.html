@@ -184,6 +184,17 @@ function PhotoCard({idx,url,onSave}){
       </div>}
     {loading&&<div className="progress-overlay"><div style={{fontSize:11,color:"#CCFF00",fontWeight:700}}>{"\uc5c5\ub85c\ub4dc "+prog+"%"}</div><div className="progress-bar-wrap"><div className="progress-bar-fill" style={{width:prog+"%"}}/></div></div>}
     {IS_ADMIN&&!loading&&<button className="upload-btn" onClick={()=>fileRef.current?.click()}>{src?"\uad50\uccb4":"\uc5c5\ub85c\ub4dc"}</button>}
+    {/* 워터마크 */}
+    {src&&<div style={{position:"absolute",inset:0,pointerEvents:"none",zIndex:2,overflow:"hidden",borderRadius:18}}>
+      <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style={{position:"absolute",inset:0}}>
+        <defs>
+          <pattern id={"wm"+idx} x="0" y="0" width="160" height="80" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)">
+            <text x="10" y="40" fontFamily="Georgia,serif" fontSize="13" fill="rgba(180,180,180,0.25)" fontWeight="400" letterSpacing="2">Layer On Drape</text>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill={"url(#wm"+idx+")"}/>
+      </svg>
+    </div>}
     <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleFile}/>
   </div>);
 }
