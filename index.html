@@ -656,7 +656,7 @@ function App(){
               <span style={{fontSize:18,fontWeight:900,color:"#f0ece4",letterSpacing:"2px"}}>준비사항</span>
             </div>
             <div className="prep-grid">
- [["✦","의상 또는 제품 사진","실제 촬영본"],["✦","성별 / 연령대",""],["✦","원하시는 분위기","참고 사진·영상"]].map((t,i)=>(
+              {[["✦","의상 또는 제품 사진","실제 촬영본"],["✦","성별 / 연령대",""],["✦","원하시는 분위기","참고 사진·영상"]].map((t,i)=>(
               <div key={i} style={{background:"rgba(204,255,0,.06)",border:"1px solid rgba(204,255,0,.35)",borderRadius:14,padding:"20px",color:"#f0ece4",textAlign:"center",flex:1,minWidth:160,boxShadow:"0 0 12px rgba(204,255,0,.15)",lineHeight:1.7}}>
                 <div style={{fontSize:20,color:"#CCFF00",marginBottom:8}}>{t[0]}</div>
                 <div style={{fontWeight:700,fontSize:"clamp(14px,1.4vw,16px)"}}>{t[1]}</div>
