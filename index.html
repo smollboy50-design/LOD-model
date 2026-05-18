@@ -496,6 +496,110 @@ function EditableText({value,onSave,tag,style,className}){
   );
 }
 
+
+function ContactSection({links, saveToSheet, uploadFile}){
+  const [bgImg, setBgImg] = React.useState(()=>{try{return localStorage.getItem("lod_contact_bg")||"";}catch{return "";}});
+  const [bgScale, setBgScale] = React.useState(()=>{try{return parseFloat(localStorage.getItem("lod_contact_bg_scale"))||1;}catch{return 1;}});
+  const [bgPos, setBgPos] = React.useState(()=>{try{const p=JSON.parse(localStorage.getItem("lod_contact_bg_pos"));return p||{x:0,y:0};}catch{return {x:0,y:0};}});
+  const [textPos, setTextPos] = React.useState(()=>{try{const p=JSON.parse(localStorage.getItem("lod_contact_text_pos"));return p||{x:0,y:0};}catch{return {x:0,y:0};}});
+  const [isDraggingBg, setIsDraggingBg] = React.useState(false);
+  const [isDraggingText, setIsDraggingText] = React.useState(false);
+  const [dragStart, setDragStart] = React.useState({x:0,y:0});
+  const [loading, setLoading] = React.useState(false);
+  const [prog, setProg] = React.useState(0);
+  const fileRef = React.useRef(null);
+
+  const handleWheel = (e)=>{
+    if(!IS_ADMIN) return;
+    e.preventDefault();
+    setBgScale(prev=>Math.min(Math.max(prev-(e.deltaY*0.001),1),3));
+  };
+
+  const handleBgMouseDown = (e)=>{
+    if(!IS_ADMIN||isDraggingText) return;
+    e.preventDefault();
+    setIsDraggingBg(true);
+    setDragStart({x:e.clientX-bgPos.x, y:e.clientY-bgPos.y});
+  };
+
+  const handleTextMouseDown = (e)=>{
+    if(!IS_ADMIN) return;
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingText(true);
+    setDragStart({x:e.clientX-textPos.x, y:e.clientY-textPos.y});
+  };
+
+  const handleMouseMove = (e)=>{
+    if(isDraggingBg) setBgPos({x:e.clientX-dragStart.x, y:e.clientY-dragStart.y});
+    if(isDraggingText) setTextPos({x:e.clientX-dragStart.x, y:e.clientY-dragStart.y});
+  };
+
+  const handleMouseUp = ()=>{setIsDraggingBg(false);setIsDraggingText(false);};
+
+  const saveSettings = async()=>{
+    localStorage.setItem("lod_contact_bg_pos", JSON.stringify(bgPos));
+    localStorage.setItem("lod_contact_bg_scale", String(bgScale));
+    localStorage.setItem("lod_contact_text_pos", JSON.stringify(textPos));
+    await saveToSheet("contact_bg_settings", JSON.stringify({...bgPos, scale:bgScale, textX:textPos.x, textY:textPos.y}));
+    alert("✅ 저장됐습니다!");
+  };
+
+  const handleUpload = async(e)=>{
+    const file=e.target.files[0]; if(!file) return;
+    setLoading(true); setProg(0);
+    try{
+      const url=await uploadFile(file,"image",setProg);
+      setBgImg(url);
+      localStorage.setItem("lod_contact_bg",url);
+      await saveToSheet("contact_bg",url);
+    }catch(err){}
+    finally{setLoading(false); e.target.value="";}
+  };
+
+  return(
+    <div style={{position:"relative",borderTop:"1px solid rgba(204,255,0,.2)",borderBottom:"1px solid rgba(204,255,0,.2)",minHeight:320,background:"#0a0a0a",overflow:"hidden",cursor:IS_ADMIN&&isDraggingBg?"grabbing":"default"}}
+      onWheel={handleWheel}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+      onMouseDown={handleBgMouseDown}
+    >
+      {/* 배경 이미지 */}
+      {bgImg&&<img src={bgImg} alt="배경" style={{position:"absolute",top:0,left:0,width:`${bgScale*100}%`,height:`${bgScale*100}%`,objectFit:"cover",objectPosition:"center",transform:`translate(${bgPos.x}px,${bgPos.y}px)`,transformOrigin:"top left",opacity:.45,zIndex:0,pointerEvents:"none",userSelect:"none"}}/>}
+      <div style={{position:"absolute",inset:0,background:"linear-gradient(to right,rgba(0,0,0,.6),rgba(0,0,0,.2))",zIndex:1,pointerEvents:"none"}}/>
+
+      {/* 텍스트 */}
+      <div style={{position:"relative",zIndex:2,padding:"80px 50px",textAlign:"center",transform:`translate(${textPos.x}px,${textPos.y}px)`,cursor:IS_ADMIN?"move":"default",display:"inline-block",width:"100%"}}
+        onMouseDown={handleTextMouseDown}>
+        <div style={{fontSize:13,letterSpacing:".5em",color:"rgba(204,255,0,.7)",fontWeight:700,textTransform:"uppercase",marginBottom:16}}>CONTACT</div>
+        <h2 style={{fontSize:"clamp(32px,3.5vw,56px)",fontWeight:900,marginBottom:16,lineHeight:1.2,color:"#f0ece4"}}>지금 바로 문의하세요</h2>
+        <p style={{fontSize:"clamp(15px,1.8vw,20px)",color:"rgba(240,236,228,.5)",marginBottom:40,lineHeight:1.9}}>의상 사진을 보내주시면 빠르게 견적을 안내해 드립니다</p>
+        <a href={links.kakao} target="_blank" rel="noopener noreferrer" className="lime-btn" style={{fontSize:18,padding:"18px 48px"}}>
+          💬 카카오톡 문의하기
+        </a>
+      </div>
+
+      {/* 관리자 컨트롤 */}
+      {IS_ADMIN&&(
+        <div style={{position:"absolute",top:12,right:12,zIndex:10,display:"flex",gap:8,flexWrap:"wrap",justifyContent:"flex-end"}}>
+          <span style={{fontSize:11,color:"rgba(240,236,228,.4)"}}>🖱️ 배경드래그=이동 | 휠=크기 | 텍스트드래그=문장이동</span>
+          <button onClick={()=>fileRef.current?.click()}
+            style={{background:"#CCFF00",color:"#0a0a0a",border:"none",borderRadius:20,padding:"8px 16px",fontSize:12,fontWeight:900,cursor:"pointer",fontFamily:"inherit"}}>
+            📷 배경사진 {bgImg?"교체":"업로드"}
+          </button>
+          <button onClick={saveSettings}
+            style={{background:"rgba(240,236,228,.1)",color:"#f0ece4",border:"1px solid rgba(240,236,228,.3)",borderRadius:20,padding:"8px 16px",fontSize:12,fontWeight:900,cursor:"pointer",fontFamily:"inherit"}}>
+            ✅ 저장
+          </button>
+          {loading&&<span style={{fontSize:11,color:"#CCFF00"}}>업로드 중 {prog}%</span>}
+          <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleUpload}/>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function App(){
   const [photos,setPhotos]=useState(Array(8).fill(""));
   const [videos,setVideos]=useState(Array(4).fill(""));
@@ -747,39 +851,9 @@ function App(){
       </div>
 
       {/* 문의 */}
-      <div style={{background:"#0a0a0a",borderTop:"1px solid rgba(204,255,0,.2)",borderBottom:"1px solid rgba(204,255,0,.2)",padding:"80px 50px",textAlign:"center",position:"relative",overflow:"hidden"}}>
-        <div style={{fontSize:13,letterSpacing:".5em",color:"rgba(204,255,0,.7)",fontWeight:700,textTransform:"uppercase",marginBottom:16}}>CONTACT</div>
-        <h2 style={{fontSize:"clamp(32px,3.5vw,56px)",fontWeight:900,marginBottom:16,lineHeight:1.2,color:"#f0ece4"}}>
-          <EditableText value={texts.contact_title} onSave={saveText("contact_title")} tag="span"/>
-        </h2>
-        <p style={{fontSize:"clamp(15px,1.8vw,20px)",color:"rgba(240,236,228,.5)",marginBottom:40,lineHeight:1.9}}>
-          <EditableText value={texts.contact_sub} onSave={saveText("contact_sub")} tag="span"/>
-        </p>
-        <a href={KAKAO_LINK} target="_blank" rel="noopener noreferrer" className="lime-btn" style={{fontSize:18,padding:"18px 48px",flex:"none",maxWidth:"280px"}}>
-          💬 카카오톡 문의하기
-        </a>
-        {IS_ADMIN&&(
-          <div style={{marginTop:20}}>
-            <button onClick={()=>document.getElementById("contact-bg-input").click()}
-              style={{background:"rgba(204,255,0,.9)",color:"#0a0a0a",border:"none",borderRadius:20,padding:"8px 18px",fontSize:12,fontWeight:900,cursor:"pointer",fontFamily:"inherit"}}>
-              📷 배경사진 업로드/교체
-            </button>
-            <input id="contact-bg-input" type="file" accept="image/*" style={{display:"none"}} onChange={async(e)=>{
-              const file=e.target.files[0]; if(!file)return;
-              try{
-                const url=await uploadFile(file,"image",()=>{});
-                document.getElementById("contact-bg-img").src=url;
-                document.getElementById("contact-bg-img").style.display="block";
-                localStorage.setItem("lod_contact_bg",url);
-                await saveToSheet("contact_bg",url);
-              }catch(err){}
-              e.target.value="";
-            }}/>
-          </div>
-        )}
-        <img id="contact-bg-img" src={localStorage.getItem("lod_contact_bg")||""} alt="" style={{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover",opacity:.35,zIndex:0,display:localStorage.getItem("lod_contact_bg")?"block":"none",pointerEvents:"none"}}/>
-      </div>
-
+      {/* CONTACT 섹션 컴포넌트 */}
+      <ContactSection links={links} saveToSheet={saveToSheet} uploadFile={uploadFile}/>
+      
       {/* 푸터 */}
       <footer style={{padding:"48px 50px",textAlign:"center"}}>
         <LDLogo size={48}/>
