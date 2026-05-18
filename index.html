@@ -497,68 +497,84 @@ function EditableText({value,onSave,tag,style,className}){
 }
 
 
+function DraggableItem({children, storageKey, style}){
+  const [pos, setPos] = React.useState(()=>{try{const p=JSON.parse(localStorage.getItem(storageKey));return p||{x:0,y:0};}catch{return {x:0,y:0};}});
+  const [dragging, setDragging] = React.useState(false);
+  const [dragStart, setDragStart] = React.useState({x:0,y:0});
+  const handleMouseDown=(e)=>{
+    if(!IS_ADMIN)return;
+    e.preventDefault();e.stopPropagation();
+    setDragging(true);
+    setDragStart({x:e.clientX-pos.x,y:e.clientY-pos.y});
+  };
+  const handleMouseMove=(e)=>{if(dragging)setPos({x:e.clientX-dragStart.x,y:e.clientY-dragStart.y});};
+  const handleMouseUp=()=>setDragging(false);
+  React.useEffect(()=>{
+    if(dragging){
+      window.addEventListener("mousemove",handleMouseMove);
+      window.addEventListener("mouseup",handleMouseUp);
+    }
+    return()=>{window.removeEventListener("mousemove",handleMouseMove);window.removeEventListener("mouseup",handleMouseUp);};
+  },[dragging,dragStart]);
+  const save=()=>localStorage.setItem(storageKey,JSON.stringify(pos));
+  return(
+    <div style={{...style,transform:`translate(${pos.x}px,${pos.y}px)`,cursor:IS_ADMIN?"move":"default",display:"inline-block"}}
+      onMouseDown={handleMouseDown}
+      title={IS_ADMIN?"드래그로 이동":""}>
+      {children}
+    </div>
+  );
+}
+
 function ContactSection({links, saveToSheet, uploadFile}){
   const [bgImg, setBgImg] = React.useState(()=>{try{return localStorage.getItem("lod_contact_bg")||"";}catch{return "";}});
   const [bgScale, setBgScale] = React.useState(()=>{try{return parseFloat(localStorage.getItem("lod_contact_bg_scale"))||1;}catch{return 1;}});
   const [bgPos, setBgPos] = React.useState(()=>{try{const p=JSON.parse(localStorage.getItem("lod_contact_bg_pos"));return p||{x:0,y:0};}catch{return {x:0,y:0};}});
-  const [textPos, setTextPos] = React.useState(()=>{try{const p=JSON.parse(localStorage.getItem("lod_contact_text_pos"));return p||{x:0,y:0};}catch{return {x:0,y:0};}});
   const [isDraggingBg, setIsDraggingBg] = React.useState(false);
-  const [isDraggingText, setIsDraggingText] = React.useState(false);
   const [dragStart, setDragStart] = React.useState({x:0,y:0});
   const [loading, setLoading] = React.useState(false);
   const [prog, setProg] = React.useState(0);
   const fileRef = React.useRef(null);
 
-  const handleWheel = (e)=>{
-    if(!IS_ADMIN) return;
-    e.preventDefault();
-    setBgScale(prev=>Math.min(Math.max(prev-(e.deltaY*0.001),1),3));
-  };
+  // 편집 가능한 텍스트
+  const [label, setLabel] = React.useState(()=>{try{return localStorage.getItem("lod_contact_label")||"CONTACT";}catch{return "CONTACT";}});
+  const [title, setTitle] = React.useState(()=>{try{return localStorage.getItem("lod_contact_title")||"지금 바로 문의하세요";}catch{return "지금 바로 문의하세요";}});
+  const [desc, setDesc] = React.useState(()=>{try{return localStorage.getItem("lod_contact_desc")||"의상 사진을 보내주시면 빠르게 견적을 안내해 드립니다";}catch{return "의상 사진을 보내주시면 빠르게 견적을 안내해 드립니다";}});
+  const [editingLabel, setEditingLabel] = React.useState(false);
+  const [editingTitle, setEditingTitle] = React.useState(false);
+  const [editingDesc, setEditingDesc] = React.useState(false);
 
-  const handleBgMouseDown = (e)=>{
-    if(!IS_ADMIN||isDraggingText) return;
-    e.preventDefault();
-    setIsDraggingBg(true);
-    setDragStart({x:e.clientX-bgPos.x, y:e.clientY-bgPos.y});
-  };
+  const handleWheel=(e)=>{if(!IS_ADMIN)return;e.preventDefault();setBgScale(prev=>Math.min(Math.max(prev-(e.deltaY*0.001),0.5),3));};
+  const handleBgMouseDown=(e)=>{if(!IS_ADMIN||e.target.tagName==="BUTTON"||e.target.tagName==="INPUT"||e.target.tagName==="TEXTAREA"||e.target.tagName==="A")return;setIsDraggingBg(true);setDragStart({x:e.clientX-bgPos.x,y:e.clientY-bgPos.y});};
+  const handleMouseMove=(e)=>{if(isDraggingBg)setBgPos({x:e.clientX-dragStart.x,y:e.clientY-dragStart.y});};
+  const handleMouseUp=()=>setIsDraggingBg(false);
 
-  const handleTextMouseDown = (e)=>{
-    if(!IS_ADMIN) return;
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDraggingText(true);
-    setDragStart({x:e.clientX-textPos.x, y:e.clientY-textPos.y});
-  };
-
-  const handleMouseMove = (e)=>{
-    if(isDraggingBg) setBgPos({x:e.clientX-dragStart.x, y:e.clientY-dragStart.y});
-    if(isDraggingText) setTextPos({x:e.clientX-dragStart.x, y:e.clientY-dragStart.y});
-  };
-
-  const handleMouseUp = ()=>{setIsDraggingBg(false);setIsDraggingText(false);};
-
-  const saveSettings = async()=>{
-    localStorage.setItem("lod_contact_bg_pos", JSON.stringify(bgPos));
-    localStorage.setItem("lod_contact_bg_scale", String(bgScale));
-    localStorage.setItem("lod_contact_text_pos", JSON.stringify(textPos));
-    await saveToSheet("contact_bg_settings", JSON.stringify({...bgPos, scale:bgScale, textX:textPos.x, textY:textPos.y}));
+  const saveAll=async()=>{
+    localStorage.setItem("lod_contact_bg_pos",JSON.stringify(bgPos));
+    localStorage.setItem("lod_contact_bg_scale",String(bgScale));
+    localStorage.setItem("lod_contact_label",label);
+    localStorage.setItem("lod_contact_title",title);
+    localStorage.setItem("lod_contact_desc",desc);
+    await saveToSheet("contact_bg_settings",JSON.stringify({...bgPos,scale:bgScale}));
+    await saveToSheet("contact_title",title);
+    await saveToSheet("contact_sub",desc);
     alert("✅ 저장됐습니다!");
   };
 
-  const handleUpload = async(e)=>{
-    const file=e.target.files[0]; if(!file) return;
-    setLoading(true); setProg(0);
+  const handleUpload=async(e)=>{
+    const file=e.target.files[0];if(!file)return;
+    setLoading(true);setProg(0);
     try{
       const url=await uploadFile(file,"image",setProg);
       setBgImg(url);
       localStorage.setItem("lod_contact_bg",url);
       await saveToSheet("contact_bg",url);
     }catch(err){}
-    finally{setLoading(false); e.target.value="";}
+    finally{setLoading(false);e.target.value="";}
   };
 
   return(
-    <div style={{position:"relative",borderTop:"1px solid rgba(204,255,0,.2)",borderBottom:"1px solid rgba(204,255,0,.2)",minHeight:320,background:"#0a0a0a",overflow:"hidden",cursor:IS_ADMIN&&isDraggingBg?"grabbing":"default"}}
+    <div style={{position:"relative",borderTop:"1px solid rgba(204,255,0,.2)",borderBottom:"1px solid rgba(204,255,0,.2)",minHeight:320,background:"#0a0a0a",overflow:"hidden"}}
       onWheel={handleWheel}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
@@ -566,39 +582,70 @@ function ContactSection({links, saveToSheet, uploadFile}){
       onMouseDown={handleBgMouseDown}
     >
       {/* 배경 이미지 */}
-      {bgImg&&<img src={bgImg} alt="배경" style={{position:"absolute",top:0,left:0,width:`${bgScale*100}%`,height:`${bgScale*100}%`,objectFit:"cover",objectPosition:"center",transform:`translate(${bgPos.x}px,${bgPos.y}px)`,transformOrigin:"top left",opacity:.45,zIndex:0,pointerEvents:"none",userSelect:"none"}}/>}
-      <div style={{position:"absolute",inset:0,background:"linear-gradient(to right,rgba(0,0,0,.6),rgba(0,0,0,.2))",zIndex:1,pointerEvents:"none"}}/>
+      {bgImg&&<img src={bgImg} alt="배경" style={{position:"absolute",top:0,left:0,width:`${bgScale*100}%`,height:`${bgScale*100}%`,objectFit:"cover",transform:`translate(${bgPos.x}px,${bgPos.y}px)`,transformOrigin:"top left",opacity:.85,zIndex:0,pointerEvents:"none",userSelect:"none"}}/>}
 
-      {/* 텍스트 */}
-      <div style={{position:"relative",zIndex:2,padding:"80px 50px",textAlign:"center",transform:`translate(${textPos.x}px,${textPos.y}px)`,cursor:IS_ADMIN?"move":"default",display:"inline-block",width:"100%"}}
-        onMouseDown={handleTextMouseDown}>
-        <div style={{fontSize:13,letterSpacing:".5em",color:"rgba(204,255,0,.7)",fontWeight:700,textTransform:"uppercase",marginBottom:16}}>CONTACT</div>
-        <h2 style={{fontSize:"clamp(32px,3.5vw,56px)",fontWeight:900,marginBottom:16,lineHeight:1.2,color:"#f0ece4"}}>지금 바로 문의하세요</h2>
-        <p style={{fontSize:"clamp(15px,1.8vw,20px)",color:"rgba(240,236,228,.5)",marginBottom:40,lineHeight:1.9}}>의상 사진을 보내주시면 빠르게 견적을 안내해 드립니다</p>
-        <a href={links.kakao} target="_blank" rel="noopener noreferrer" className="lime-btn" style={{fontSize:18,padding:"18px 48px"}}>
-          💬 카카오톡 문의하기
-        </a>
+      {/* 콘텐츠 */}
+      <div style={{position:"relative",zIndex:2,padding:"80px 50px",textAlign:"center"}}>
+
+        {/* CONTACT 라벨 */}
+        <DraggableItem storageKey="lod_pos_label" style={{marginBottom:16,display:"block"}}>
+          {IS_ADMIN&&editingLabel
+            ?<input value={label} onChange={e=>setLabel(e.target.value)} onBlur={()=>setEditingLabel(false)} autoFocus
+              style={{fontSize:13,letterSpacing:".5em",color:"rgba(204,255,0,.7)",fontWeight:700,background:"transparent",border:"1px dashed rgba(204,255,0,.5)",borderRadius:4,textAlign:"center",fontFamily:"inherit",textTransform:"uppercase",padding:"2px 8px"}}/>
+            :<div style={{fontSize:13,letterSpacing:".5em",color:"rgba(204,255,0,.7)",fontWeight:700,textTransform:"uppercase"}}
+              onClick={()=>IS_ADMIN&&setEditingLabel(true)}>{label}</div>
+          }
+        </DraggableItem>
+
+        {/* 제목 */}
+        <DraggableItem storageKey="lod_pos_title" style={{marginBottom:16,display:"block"}}>
+          {IS_ADMIN&&editingTitle
+            ?<textarea value={title} onChange={e=>setTitle(e.target.value)} onBlur={()=>setEditingTitle(false)} autoFocus
+              style={{fontSize:"clamp(32px,3.5vw,56px)",fontWeight:900,color:"#f0ece4",background:"transparent",border:"1px dashed rgba(204,255,0,.5)",borderRadius:4,textAlign:"center",fontFamily:"inherit",width:"100%",resize:"none"}}/>
+            :<h2 style={{fontSize:"clamp(32px,3.5vw,56px)",fontWeight:900,lineHeight:1.2,color:"#f0ece4",margin:0}}
+              onClick={()=>IS_ADMIN&&setEditingTitle(true)}>{title}</h2>
+          }
+        </DraggableItem>
+
+        {/* 설명 */}
+        <DraggableItem storageKey="lod_pos_desc" style={{marginBottom:40,display:"block"}}>
+          {IS_ADMIN&&editingDesc
+            ?<textarea value={desc} onChange={e=>setDesc(e.target.value)} onBlur={()=>setEditingDesc(false)} autoFocus
+              style={{fontSize:"clamp(15px,1.8vw,20px)",color:"rgba(240,236,228,.5)",background:"transparent",border:"1px dashed rgba(204,255,0,.5)",borderRadius:4,textAlign:"center",fontFamily:"inherit",width:"100%",resize:"none"}}/>
+            :<p style={{fontSize:"clamp(15px,1.8vw,20px)",color:"rgba(240,236,228,.5)",lineHeight:1.9,margin:0}}
+              onClick={()=>IS_ADMIN&&setEditingDesc(true)}>{desc}</p>
+          }
+        </DraggableItem>
+
+        {/* 버튼 */}
+        <DraggableItem storageKey="lod_pos_btn" style={{display:"block"}}>
+          <a href={links.kakao} target="_blank" rel="noopener noreferrer" className="lime-btn" style={{fontSize:18,padding:"18px 48px"}}>
+            💬 카카오톡 문의하기
+          </a>
+        </DraggableItem>
+
       </div>
 
       {/* 관리자 컨트롤 */}
       {IS_ADMIN&&(
-        <div style={{position:"absolute",top:12,right:12,zIndex:10,display:"flex",gap:8,flexWrap:"wrap",justifyContent:"flex-end"}}>
-          <span style={{fontSize:11,color:"rgba(240,236,228,.4)"}}>🖱️ 배경드래그=이동 | 휠=크기 | 텍스트드래그=문장이동</span>
+        <div style={{position:"absolute",top:12,right:12,zIndex:10,display:"flex",gap:8,flexWrap:"wrap",justifyContent:"flex-end",alignItems:"center"}}>
+          <span style={{fontSize:10,color:"rgba(240,236,228,.4)"}}>🖱️ 배경드래그=이동 | 휠=크기 | 텍스트클릭=편집 | 텍스트드래그=이동</span>
           <button onClick={()=>fileRef.current?.click()}
             style={{background:"#CCFF00",color:"#0a0a0a",border:"none",borderRadius:20,padding:"8px 16px",fontSize:12,fontWeight:900,cursor:"pointer",fontFamily:"inherit"}}>
-            📷 배경사진 {bgImg?"교체":"업로드"}
+            📷 배경 {bgImg?"교체":"업로드"}
           </button>
-          <button onClick={saveSettings}
+          <button onClick={saveAll}
             style={{background:"rgba(240,236,228,.1)",color:"#f0ece4",border:"1px solid rgba(240,236,228,.3)",borderRadius:20,padding:"8px 16px",fontSize:12,fontWeight:900,cursor:"pointer",fontFamily:"inherit"}}>
             ✅ 저장
           </button>
-          {loading&&<span style={{fontSize:11,color:"#CCFF00"}}>업로드 중 {prog}%</span>}
+          {loading&&<span style={{fontSize:11,color:"#CCFF00"}}>{prog}%</span>}
           <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleUpload}/>
         </div>
       )}
     </div>
   );
 }
+
 
 function App(){
   const [photos,setPhotos]=useState(Array(8).fill(""));
