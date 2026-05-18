@@ -523,6 +523,9 @@ function App(){
         contact_title:data.contact_title||t.contact_title,
         contact_sub:data.contact_sub||t.contact_sub,
       }));
+      // ✅ 사진/영상 URL 시트에서 불러오기
+      setPhotos(Array(8).fill("").map((_,i)=>data[`AI모델사진${i+1}`]||""));
+      setVideos(Array(4).fill("").map((_,i)=>data[`AI모델영상${i+1}`]||""));
       setReady(true);
     });
   },[]);
